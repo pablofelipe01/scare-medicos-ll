@@ -14,7 +14,9 @@ CREATE TABLE usuarios (
   wallet_creada     BOOLEAN DEFAULT false,
   tokens_activados  BOOLEAN DEFAULT false,
   fecha_creacion    TIMESTAMP DEFAULT NOW(),
-  fecha_activacion  TIMESTAMP
+  fecha_activacion  TIMESTAMP,
+  codigo_hash       TEXT,
+  recovery_hash     TEXT
 );
 
 -- Enum para estado de tokens

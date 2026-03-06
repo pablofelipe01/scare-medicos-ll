@@ -1,8 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import { Usuario, PlanToken } from '@/types'
 import { formatDate } from '@/lib/format'
 import { AcelerarModal } from './AcelerarModal'
+import { ChangePinModal } from './ChangePinModal'
 import { useToast } from '@/hooks/use-toast'
 
 interface SidebarProps {
@@ -14,6 +16,7 @@ interface SidebarProps {
 
 export function Sidebar({ usuario, planes, totalDisponibles, onLogout }: SidebarProps) {
   const { toast } = useToast()
+  const [changePinOpen, setChangePinOpen] = useState(false)
 
   // Obtener iniciales
   const initials = usuario.afiliado
@@ -70,15 +73,10 @@ export function Sidebar({ usuario, planes, totalDisponibles, onLogout }: Sidebar
       {/* Footer links */}
       <div className="mt-auto pt-6 space-y-3">
         <button
-          onClick={() =>
-            toast({
-              title: 'Proximamente',
-              description: 'Esta funcion estara disponible pronto.',
-            })
-          }
+          onClick={() => setChangePinOpen(true)}
           className="text-sm text-[#6B5CE7] hover:underline block"
         >
-          Cambiar Contrasena
+          Cambiar PIN
         </button>
         <button
           onClick={onLogout}
@@ -87,6 +85,12 @@ export function Sidebar({ usuario, planes, totalDisponibles, onLogout }: Sidebar
           Cerrar Sesion
         </button>
       </div>
+
+      <ChangePinModal
+        open={changePinOpen}
+        onOpenChange={setChangePinOpen}
+        identificacion={usuario.identificacion}
+      />
     </aside>
   )
 }

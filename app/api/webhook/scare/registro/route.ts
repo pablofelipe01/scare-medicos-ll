@@ -30,21 +30,23 @@ export async function POST(request: NextRequest) {
       ip_origen: ip,
     })
 
-    // 4. Validar campos requeridos
-    const { IDENTIFICACION, AFILIADO, PROFESION, ESPECIALIDAD, NOMBRE_PLAN, PLANES } = payload as {
-      IDENTIFICACION: string
+    // 4. Validar campos requeridos (SCARE puede enviar números en vez de strings)
+    const raw = payload as {
+      IDENTIFICACION: string | number
       AFILIADO: string
       PROFESION: string
       ESPECIALIDAD: string
       NOMBRE_PLAN: string
       PLANES: Array<{
-        IDENTIFICACION: string
+        IDENTIFICACION: string | number
         FECHA_VINCULACION: string
         CODIGO_PLAN: string
         TOKENS: number
         ESTADO: string
       }>
     }
+    const IDENTIFICACION = String(raw.IDENTIFICACION)
+    const { AFILIADO, PROFESION, ESPECIALIDAD, NOMBRE_PLAN, PLANES } = raw
 
     if (!IDENTIFICACION || !AFILIADO || !PLANES || !Array.isArray(PLANES)) {
       await supabaseAdmin.from('webhook_logs').insert({
@@ -95,7 +97,7 @@ export async function POST(request: NextRequest) {
     // 7. Insert de cada PLAN en planes_tokens
     for (const plan of PLANES) {
       const { error: planError } = await supabaseAdmin.from('planes_tokens').insert({
-        identificacion: plan.IDENTIFICACION || IDENTIFICACION,
+        identificacion: String(plan.IDENTIFICACION || IDENTIFICACION),
         codigo_plan: plan.CODIGO_PLAN,
         tokens: plan.TOKENS,
         estado: plan.ESTADO || 'DISPONIBLES',

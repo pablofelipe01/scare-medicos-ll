@@ -11,7 +11,7 @@ export async function GET(
     // Buscar usuario por identificacion
     const { data: usuario, error: userError } = await supabaseAdmin
       .from('usuarios')
-      .select('*')
+      .select('identificacion, afiliado, profesion, especialidad, nombre_plan, wallet_address, wallet_creada, tokens_activados, fecha_creacion, fecha_activacion, codigo_hash')
       .eq('identificacion', cedula)
       .single()
 
@@ -30,8 +30,14 @@ export async function GET(
       console.error('Error fetching planes:', planesError)
     }
 
+    // No exponer hashes al frontend
+    const { codigo_hash, ...usuarioSafe } = usuario
+
     return NextResponse.json({
-      usuario,
+      usuario: {
+        ...usuarioSafe,
+        codigo_configurado: !!codigo_hash,
+      },
       planes: planes || [],
     })
   } catch (error) {

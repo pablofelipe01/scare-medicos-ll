@@ -11,6 +11,7 @@ export interface Usuario {
   tokens_activados: boolean
   fecha_creacion: string
   fecha_activacion: string | null
+  codigo_configurado: boolean
 }
 
 export interface PlanToken {
