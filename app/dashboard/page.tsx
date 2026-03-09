@@ -87,7 +87,6 @@ export default function DashboardPage() {
   }
 
   const { usuario, planes, totalDisponibles } = data
-  console.log('DEBUG tokens_activados:', usuario.tokens_activados, typeof usuario.tokens_activados)
   const showBanner = !usuario.tokens_activados && planes.some((p) => p.estado === 'DISPONIBLES')
 
   // Initials for top bar avatar
