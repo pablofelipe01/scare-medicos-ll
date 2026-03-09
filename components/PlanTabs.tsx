@@ -1,19 +1,21 @@
 'use client'
 
-import { PlanToken } from '@/types'
+import { PlanToken, Usuario } from '@/types'
 import { MetricCard } from './MetricCard'
 import { ProgressBar } from './ProgressBar'
 import { TokenChart } from './TokenChart'
 import { AcelerarModal } from './AcelerarModal'
+import { generateCertificate } from '@/lib/generate-certificate'
 import { useToast } from '@/hooks/use-toast'
 import { useState } from 'react'
 import { Download } from 'lucide-react'
 
 interface PlanTabsProps {
   planes: PlanToken[]
+  usuario: Usuario
 }
 
-export function PlanTabs({ planes }: PlanTabsProps) {
+export function PlanTabs({ planes, usuario }: PlanTabsProps) {
   const { toast } = useToast()
 
   // Obtener códigos de plan únicos, ordenados por fecha_vinculacion
@@ -89,7 +91,15 @@ export function PlanTabs({ planes }: PlanTabsProps) {
 
       {/* Descargar Certificado */}
       <button
-        onClick={handleProximamente}
+        onClick={() =>
+          generateCertificate({
+            usuario,
+            codigoPlan: activeTab,
+            disponibles,
+            reservados,
+            utilizados,
+          })
+        }
         className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm text-[#666666] hover:bg-gray-50 transition-colors"
       >
         <Download className="h-4 w-4" />

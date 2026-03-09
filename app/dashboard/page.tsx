@@ -127,7 +127,7 @@ export default function DashboardPage() {
         )}
 
         {/* Plan Tabs + Content */}
-        <PlanTabs planes={planes} />
+        <PlanTabs planes={planes} usuario={usuario} />
 
         {/* Activate Modal */}
         <ActivateTokensModal
