@@ -56,7 +56,11 @@ export async function GET(
       totalUtilizados,
     }
 
-    return NextResponse.json(dashboardData)
+    return NextResponse.json(dashboardData, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+      },
+    })
   } catch (error) {
     console.error('Error in GET /api/user/tokens/[cedula]:', error)
     return NextResponse.json(
