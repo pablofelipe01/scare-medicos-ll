@@ -23,7 +23,7 @@ export default function DashboardPage() {
 
   const fetchData = useCallback(async (id: string) => {
     try {
-      const res = await fetch(`/api/user/tokens/${id}`)
+      const res = await fetch(`/api/user/tokens/${id}`, { cache: 'no-store' })
       if (!res.ok) {
         router.push('/')
         return
@@ -87,6 +87,7 @@ export default function DashboardPage() {
   }
 
   const { usuario, planes, totalDisponibles } = data
+  console.log('DEBUG tokens_activados:', usuario.tokens_activados, typeof usuario.tokens_activados)
   const showBanner = !usuario.tokens_activados && planes.some((p) => p.estado === 'DISPONIBLES')
 
   // Initials for top bar avatar
