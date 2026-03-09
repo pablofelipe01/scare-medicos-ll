@@ -18,6 +18,7 @@ export default function LoginPage() {
   const [nuevoPin, setNuevoPin] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const router = useRouter()
 
   // Paso 1: verificar cedula
@@ -174,6 +175,7 @@ export default function LoginPage() {
       setNuevoPin('')
       setStep('LOGIN')
       setError('')
+      setSuccess('PIN cambiado correctamente. Ingresa con tu nuevo PIN.')
     } catch {
       setError('Error de conexion. Intenta nuevamente.')
     } finally {
@@ -285,6 +287,7 @@ export default function LoginPage() {
                 onChange={(e) => {
                   setPin(e.target.value.replace(/\D/g, '').slice(0, 6))
                   setError('')
+                  setSuccess('')
                 }}
                 className="h-12 text-2xl text-center tracking-[0.5em] border-gray-300 focus:border-[#6B5CE7] focus:ring-[#6B5CE7]"
                 disabled={loading}
@@ -484,6 +487,13 @@ export default function LoginPage() {
               </button>
             </div>
           </>
+        )}
+
+        {/* Success */}
+        {success && (
+          <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-600 text-center">
+            {success}
+          </div>
         )}
 
         {/* Error */}
