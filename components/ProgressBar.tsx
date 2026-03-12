@@ -41,11 +41,11 @@ export function ProgressBar({ disponibles, reservados, utilizados }: ProgressBar
         </div>
         <div className="flex items-center gap-1">
           <span className="w-2 h-2 rounded-full bg-[#6B5CE7] inline-block" />
-          Disponibles {pctDisponibles.toFixed(0)}%
+          Por Usar {pctDisponibles.toFixed(0)}%
         </div>
         <div className="flex items-center gap-1">
           <span className="w-2 h-2 rounded-full bg-[#EEEEEE] border border-gray-300 inline-block" />
-          Reservados {pctReservados.toFixed(0)}%
+          Máximos Posibles 100%
         </div>
       </div>
     </div>

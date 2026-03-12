@@ -70,9 +70,9 @@ export function PlanTabs({ planes, usuario }: PlanTabsProps) {
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <MetricCard label="Tokens Máximos Posibles" value={disponibles + reservados + utilizados} variant="blue" />
         <MetricCard label="Tokens Utilizados" value={utilizados} variant="gray" />
-        <MetricCard label="Tokens Disponibles" value={disponibles} variant="green" />
-        <MetricCard label="Tokens Reservados" value={reservados} variant="blue" />
+        <MetricCard label="Tokens por Usar" value={disponibles} variant="green" />
       </div>
 
       {/* Acelerar Button */}

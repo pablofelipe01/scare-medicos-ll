@@ -58,9 +58,9 @@ export function Sidebar({ usuario, planes, totalDisponibles, onLogout }: Sidebar
 
       <hr className="mb-6" />
 
-      {/* Tokens Disponibles */}
+      {/* Tokens por Usar */}
       <div className="bg-[#F9F9F9] rounded-xl p-4 mb-4">
-        <p className="text-xs text-[#666666] uppercase tracking-wider mb-1">Tokens Disponibles</p>
+        <p className="text-xs text-[#666666] uppercase tracking-wider mb-1">Tokens por Usar</p>
         <p className="text-3xl font-bold text-[#1A1A2E]">{totalDisponibles.toLocaleString()}</p>
       </div>
 

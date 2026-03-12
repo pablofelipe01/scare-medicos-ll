@@ -93,9 +93,9 @@ export function generateCertificate({
   const startX = (pageW - totalBoxW) / 2
 
   const boxes = [
-    { label: 'Tokens Disponibles', value: disponibles, color: [34, 197, 94] as [number, number, number] },
-    { label: 'Tokens Reservados', value: reservados, color: [59, 130, 246] as [number, number, number] },
+    { label: 'Tokens Máximos Posibles', value: disponibles + reservados + utilizados, color: [59, 130, 246] as [number, number, number] },
     { label: 'Tokens Utilizados', value: utilizados, color: [156, 163, 175] as [number, number, number] },
+    { label: 'Tokens por Usar', value: disponibles, color: [34, 197, 94] as [number, number, number] },
   ]
 
   boxes.forEach((box, i) => {
