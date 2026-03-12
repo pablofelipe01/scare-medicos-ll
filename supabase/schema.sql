@@ -10,6 +10,8 @@ CREATE TABLE usuarios (
   profesion         VARCHAR,
   especialidad      VARCHAR,
   nombre_plan       VARCHAR,
+  correo            VARCHAR,
+  tipo              VARCHAR,
   wallet_address    VARCHAR UNIQUE,
   wallet_creada     BOOLEAN DEFAULT false,
   tokens_activados  BOOLEAN DEFAULT false,

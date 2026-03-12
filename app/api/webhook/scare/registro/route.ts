@@ -37,6 +37,8 @@ export async function POST(request: NextRequest) {
       PROFESION: string
       ESPECIALIDAD: string
       NOMBRE_PLAN: string
+      CORREO: string
+      TIPO: string
       PLANES: Array<{
         IDENTIFICACION: string | number
         FECHA_VINCULACION: string
@@ -46,7 +48,7 @@ export async function POST(request: NextRequest) {
       }>
     }
     const IDENTIFICACION = String(raw.IDENTIFICACION)
-    const { AFILIADO, PROFESION, ESPECIALIDAD, NOMBRE_PLAN, PLANES } = raw
+    const { AFILIADO, PROFESION, ESPECIALIDAD, NOMBRE_PLAN, CORREO, TIPO, PLANES } = raw
 
     if (!IDENTIFICACION || !AFILIADO || !PLANES || !Array.isArray(PLANES)) {
       await supabaseAdmin.from('webhook_logs').insert({
@@ -73,6 +75,8 @@ export async function POST(request: NextRequest) {
         profesion: PROFESION || null,
         especialidad: ESPECIALIDAD || null,
         nombre_plan: NOMBRE_PLAN || null,
+        correo: CORREO || null,
+        tipo: TIPO || null,
         wallet_address: walletAddress,
         wallet_creada: true,
       },

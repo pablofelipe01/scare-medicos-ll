@@ -6,6 +6,8 @@ export interface Usuario {
   profesion: string | null
   especialidad: string | null
   nombre_plan: string | null
+  correo: string | null
+  tipo: string | null
   wallet_address: string | null
   wallet_creada: boolean
   tokens_activados: boolean
