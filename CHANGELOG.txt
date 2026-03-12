@@ -1,0 +1,128 @@
+========================================================================
+CHANGELOG — Plataforma TokBox (SCARE / ARGESSA)
+Registro de cambios realizados sobre el proyecto
+========================================================================
+
+1. AUTENTICACIÓN Y SEGURIDAD
+------------------------------------------------------------------------
+
+- Se implementó sistema de autenticación por PIN de 6 dígitos con
+  hash bcrypt (10 salt rounds) almacenado en Supabase.
+
+- Se creó flujo de setup de PIN para usuarios nuevos, incluyendo
+  generación de frase de recuperación de 5 palabras en español.
+
+- Se reemplazó el sistema de frase de recuperación por recuperación
+  de PIN vía correo electrónico usando Resend:
+  * El usuario hace clic en "Olvidé mi PIN" e ingresa su cédula.
+  * El sistema genera un PIN provisional de 6 dígitos (expira en 15 min).
+  * Se envía correo desde no-reply@sylicon.tech con el PIN provisional.
+  * Al ingresar con el PIN provisional, se le pide crear un nuevo PIN
+    permanente y entra directamente al dashboard.
+  * Columnas nuevas en BD: pin_provisional_hash, pin_provisional_expira.
+
+- Se creó endpoint de cambio de PIN para usuarios autenticados
+  (Cambiar PIN desde el sidebar del dashboard).
+
+2. INTERFAZ DE USUARIO (UI)
+------------------------------------------------------------------------
+
+- Se corrigieron tildes en toda la interfaz (cédula, número, dígitos, etc.).
+
+- Se cambió la referencia de "SCARE" a "ARGESSA" en mensajes al usuario.
+
+- Se renombró "Aportes" a "Tokens" en toda la plataforma.
+
+- Se reemplazó el logo de texto "Sylicon" por la imagen del logo TokBox
+  (Positivo.png y Negativo.png en /public).
+
+- Se cambió "Afiliado desde" a "Integrado desde" en el sidebar.
+
+- Se muestra profesión y especialidad del médico debajo del nombre
+  en el sidebar.
+
+- Se reordenaron las métricas de tokens:
+  * Tokens Máximos Posibles (disponibles + reservados + utilizados)
+  * Tokens Utilizados
+  * Tokens por Usar (disponibles + reservados)
+
+- Se corrigió el cálculo de "Tokens por Usar" que antes solo mostraba
+  los disponibles, ahora muestra disponibles + reservados (total - utilizados).
+
+- Se agregó sección colapsable de "Documentos" en el sidebar con enlaces a:
+  * Contrato de Mandato
+  * Autorización Datos Personales FEVS
+  * Solicitud de Integración AES Colectivo
+  * Contrato de Tokenización
+
+- Se comentaron los botones de "Descargar Certificado" y "Descargar Tokens"
+  hasta tener la información final del cliente.
+
+- Se simplificó el texto del banner de activación a
+  "Tienes tokens listos para activar".
+
+- Se implementó renderizado condicional para usuarios tipo ANTIGUO:
+  * No se muestra el botón "ACELERAR TOKENS"
+  * No se muestra la gráfica "Tokens Realizados"
+
+3. AVATAR / FOTO DE PERFIL
+------------------------------------------------------------------------
+
+- Se implementó carga de foto de perfil del usuario:
+  * Se creó bucket "avatars" en Supabase Storage (público).
+  * Endpoint POST /api/user/avatar que recibe FormData (imagen + cédula).
+  * Validación: solo imágenes, máximo 2MB, upsert (sobreescribe si existe).
+  * En el sidebar, al pasar el cursor sobre el avatar aparece un ícono
+    de cámara para cambiar la foto.
+  * Se muestra spinner durante la carga.
+  * Columna nueva en BD: avatar_url.
+
+4. WEBHOOK Y DATOS
+------------------------------------------------------------------------
+
+- Se actualizó el webhook de registro (POST /api/webhook/scare/registro)
+  para aceptar los nuevos campos CORREO y TIPO del payload de SCARE.
+
+- Se agregaron las columnas correo y tipo a la tabla usuarios.
+
+5. INFRAESTRUCTURA / CACHE
+------------------------------------------------------------------------
+
+- Se solucionó problema crítico de cache en Vercel:
+  * Next.js 14 cachea por defecto todas las llamadas fetch() del servidor,
+    incluyendo las internas del cliente de Supabase.
+  * Esto causaba que datos como tokens_activados mostraran valores viejos.
+  * Se configuró el cliente Supabase admin con cache: 'no-store' en su
+    fetch global para evitar datos obsoletos.
+  * Se agregó export const dynamic = 'force-dynamic' y headers
+    Cache-Control: no-store en endpoints críticos.
+
+6. CERTIFICADO PDF
+------------------------------------------------------------------------
+
+- Se implementó generación de certificado PDF con jsPDF (client-side):
+  * Incluye datos del usuario, wallet, resumen de tokens por plan.
+  * Actualmente comentado hasta tener aprobación final del formato.
+
+7. VARIABLES DE ENTORNO REQUERIDAS
+------------------------------------------------------------------------
+
+- NEXT_PUBLIC_SUPABASE_URL — URL del proyecto Supabase
+- SUPABASE_SERVICE_ROLE_KEY — Clave de servicio de Supabase
+- SCARE_JWT_SECRET — Secreto para verificar JWT del webhook de SCARE
+- RESEND_API_KEY — API key de Resend para envío de correos
+- PRIVATE_KEY — Clave privada de la wallet desplegadora del contrato
+- NEXT_PUBLIC_CONTRACT_ADDRESS — Dirección del contrato ERC-1155
+
+8. ESTRUCTURA DE BASE DE DATOS (cambios)
+------------------------------------------------------------------------
+
+ALTER TABLE usuarios ADD COLUMN correo VARCHAR;
+ALTER TABLE usuarios ADD COLUMN tipo VARCHAR;
+ALTER TABLE usuarios ADD COLUMN avatar_url VARCHAR;
+ALTER TABLE usuarios ADD COLUMN pin_provisional_hash TEXT;
+ALTER TABLE usuarios ADD COLUMN pin_provisional_expira TIMESTAMP;
+
+========================================================================
+Última actualización: 12 de marzo de 2026
+========================================================================

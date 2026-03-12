@@ -5,10 +5,7 @@ import { MetricCard } from './MetricCard'
 import { ProgressBar } from './ProgressBar'
 import { TokenChart } from './TokenChart'
 import { AcelerarModal } from './AcelerarModal'
-import { generateCertificate } from '@/lib/generate-certificate'
-import { useToast } from '@/hooks/use-toast'
 import { useState } from 'react'
-import { Download } from 'lucide-react'
 
 interface PlanTabsProps {
   planes: PlanToken[]
@@ -16,8 +13,6 @@ interface PlanTabsProps {
 }
 
 export function PlanTabs({ planes, usuario }: PlanTabsProps) {
-  const { toast } = useToast()
-
   // Obtener códigos de plan únicos, ordenados por fecha_vinculacion
   const planCodes = Array.from(new Set(planes.map((p) => p.codigo_plan)))
   const [activeTab, setActiveTab] = useState(planCodes[0] || '')
@@ -33,13 +28,6 @@ export function PlanTabs({ planes, usuario }: PlanTabsProps) {
   const utilizados = activePlanes
     .filter((p) => p.estado === 'UTILIZADOS')
     .reduce((sum, p) => sum + p.tokens, 0)
-
-  const handleProximamente = () => {
-    toast({
-      title: 'Próximamente',
-      description: 'Función disponible próximamente.',
-    })
-  }
 
   if (planCodes.length === 0) {
     return (

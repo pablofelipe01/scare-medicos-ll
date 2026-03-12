@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
-import { verifyValue } from '@/lib/access-code'
+import { verifyValue, hashValue } from '@/lib/access-code'
+import crypto from 'crypto'
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,13 +40,21 @@ export async function POST(request: NextRequest) {
       if (expira > new Date()) {
         const validProvisional = await verifyValue(pin, usuario.pin_provisional_hash)
         if (validProvisional) {
-          // Limpiar PIN provisional
+          // Generar token de reset y limpiar PIN provisional
+          const resetToken = crypto.randomBytes(32).toString('hex')
+          const resetTokenHash = await hashValue(resetToken)
+
           await supabaseAdmin
             .from('usuarios')
-            .update({ pin_provisional_hash: null, pin_provisional_expira: null })
+            .update({
+              pin_provisional_hash: null,
+              pin_provisional_expira: null,
+              reset_token_hash: resetTokenHash,
+              reset_token_expira: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+            })
             .eq('identificacion', String(identificacion))
 
-          return NextResponse.json({ success: true, provisional: true })
+          return NextResponse.json({ success: true, provisional: true, resetToken })
         }
       }
     }

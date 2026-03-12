@@ -11,16 +11,20 @@ export async function GET(
   try {
     const { cedula } = params
 
-    // Consultar usuario
-    const { data: usuario, error: userError } = await supabaseAdmin
+    // Consultar usuario (sin exponer hashes ni tokens de reset)
+    const { data: rawUsuario, error: userError } = await supabaseAdmin
       .from('usuarios')
-      .select('*')
+      .select('identificacion, afiliado, profesion, especialidad, nombre_plan, correo, tipo, wallet_address, wallet_creada, tokens_activados, fecha_creacion, fecha_activacion, avatar_url, codigo_hash')
       .eq('identificacion', cedula)
       .single()
 
-    if (userError || !usuario) {
+    if (userError || !rawUsuario) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 })
     }
+
+    // Computar codigo_configurado y excluir el hash de la respuesta
+    const { codigo_hash, ...safeFields } = rawUsuario
+    const usuario = { ...safeFields, codigo_configurado: !!codigo_hash }
 
     // Consultar todos los planes del usuario
     const { data: planes, error: planesError } = await supabaseAdmin

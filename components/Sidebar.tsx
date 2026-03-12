@@ -3,7 +3,6 @@
 import { useRef, useState } from 'react'
 import { Usuario, PlanToken } from '@/types'
 import { formatDate } from '@/lib/format'
-import { AcelerarModal } from './AcelerarModal'
 import { ChangePinModal } from './ChangePinModal'
 import { useToast } from '@/hooks/use-toast'
 import { FileText, ChevronDown, ChevronUp, Camera } from 'lucide-react'
@@ -161,9 +160,6 @@ export function Sidebar({ usuario, planes, totalPorUsar, onLogout }: SidebarProp
         <p>Próximo token: <span className="font-medium">Por definir</span></p>
         <p>Último token: <span className="font-medium">{formatDate(lastVinculacion || null)}</span></p>
       </div>
-
-      {/* Acelerar Tokens */}
-      {usuario.tipo !== 'ANTIGUO' && <AcelerarModal />}
 
       {/* Footer links */}
       <div className="mt-auto pt-6 space-y-3">

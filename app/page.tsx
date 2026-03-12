@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [pinConfirm, setPinConfirm] = useState('')
   const [fraseGenerada, setFraseGenerada] = useState('')
   const [nuevoPin, setNuevoPin] = useState('')
-  const [correoMasked, setCorreoMasked] = useState('')
+  const [resetToken, setResetToken] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -89,6 +89,7 @@ export default function LoginPage() {
 
       if (data.provisional) {
         // PIN provisional válido — pedir nuevo PIN permanente
+        setResetToken(data.resetToken)
         setPin('')
         setNuevoPin('')
         setPinConfirm('')
@@ -169,7 +170,6 @@ export default function LoginPage() {
         return
       }
 
-      setCorreoMasked(data.correo)
       setStep('LOGIN')
       setError('')
       setSuccess(`PIN provisional enviado a ${data.correo}. Válido por 15 minutos.`)
@@ -204,6 +204,7 @@ export default function LoginPage() {
         body: JSON.stringify({
           identificacion: cedula.trim(),
           nuevoPin,
+          resetToken,
         }),
       })
 

@@ -21,6 +21,8 @@ CREATE TABLE usuarios (
   recovery_hash     TEXT,
   pin_provisional_hash   TEXT,
   pin_provisional_expira TIMESTAMP,
+  reset_token_hash       TEXT,
+  reset_token_expira     TIMESTAMP,
   avatar_url        VARCHAR
 );
 
