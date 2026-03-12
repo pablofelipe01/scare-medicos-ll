@@ -210,7 +210,7 @@ export default function LoginPage() {
                 Ingresa tu número de cédula
               </h2>
               <p className="text-sm text-[#666666]">
-                Accede a tu billetera de tokens on-chain
+                Accede a tu TokBox
               </p>
             </div>
             <form onSubmit={handleCheckCedula} className="space-y-4">
