@@ -70,9 +70,9 @@ export function PlanTabs({ planes, usuario }: PlanTabsProps) {
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard label="Aportes Utilizados" value={utilizados} variant="gray" />
-        <MetricCard label="Aportes Disponibles" value={disponibles} variant="green" />
-        <MetricCard label="Aportes Reservados" value={reservados} variant="blue" />
+        <MetricCard label="Tokens Utilizados" value={utilizados} variant="gray" />
+        <MetricCard label="Tokens Disponibles" value={disponibles} variant="green" />
+        <MetricCard label="Tokens Reservados" value={reservados} variant="blue" />
       </div>
 
       {/* Acelerar Button */}
@@ -108,7 +108,7 @@ export function PlanTabs({ planes, usuario }: PlanTabsProps) {
 
       {/* Chart */}
       <div className="bg-white rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-[#1A1A2E] mb-4">Aportes Realizados</h3>
+        <h3 className="text-lg font-semibold text-[#1A1A2E] mb-4">Tokens Realizados</h3>
         <TokenChart planes={activePlanes} />
       </div>
 
@@ -118,7 +118,7 @@ export function PlanTabs({ planes, usuario }: PlanTabsProps) {
         className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm text-[#666666] hover:bg-gray-50 transition-colors"
       >
         <Download className="h-4 w-4" />
-        Descargar Aportes
+        Descargar Tokens
       </button>
     </div>
   )

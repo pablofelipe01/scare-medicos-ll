@@ -6,8 +6,8 @@ import { Toaster } from '@/components/ui/toaster'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Sylicon — Aportes On-Chain',
-  description: 'Plataforma de tokenización de aportes médicos on-chain',
+  title: 'Sylicon — Tokens On-Chain',
+  description: 'Plataforma de tokenización de tokens médicos on-chain',
 }
 
 export default function RootLayout({

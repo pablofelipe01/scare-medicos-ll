@@ -17,16 +17,16 @@ export function AcelerarModal() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="w-full bg-[#1A1A1A] hover:bg-[#333333] text-white font-semibold">
-          ACELERAR APORTES
+          ACELERAR TOKENS
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
-          <DialogTitle>Acelerar Aportes</DialogTitle>
+          <DialogTitle>Acelerar Tokens</DialogTitle>
         </DialogHeader>
         <div className="py-4 text-center">
           <p className="text-sm text-[#666666]">
-            Para acelerar tus aportes, contacta a tu asesor SCARE.
+            Para acelerar tus tokens, contacta a tu asesor.
           </p>
         </div>
       </DialogContent>

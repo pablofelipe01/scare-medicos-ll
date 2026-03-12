@@ -61,7 +61,7 @@ export function generateCertificate({
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(11)
   doc.setTextColor(107, 92, 231)
-  doc.text('SYLICON — Sistema de Tokenizacion de Aportes Medicos', pageW / 2, 52, { align: 'center' })
+  doc.text('SYLICON — Sistema de Tokenizacion Medica', pageW / 2, 52, { align: 'center' })
 
   // Body text
   doc.setFontSize(11)
@@ -93,9 +93,9 @@ export function generateCertificate({
   const startX = (pageW - totalBoxW) / 2
 
   const boxes = [
-    { label: 'Aportes Disponibles', value: disponibles, color: [34, 197, 94] as [number, number, number] },
-    { label: 'Aportes Reservados', value: reservados, color: [59, 130, 246] as [number, number, number] },
-    { label: 'Aportes Utilizados', value: utilizados, color: [156, 163, 175] as [number, number, number] },
+    { label: 'Tokens Disponibles', value: disponibles, color: [34, 197, 94] as [number, number, number] },
+    { label: 'Tokens Reservados', value: reservados, color: [59, 130, 246] as [number, number, number] },
+    { label: 'Tokens Utilizados', value: utilizados, color: [156, 163, 175] as [number, number, number] },
   ]
 
   boxes.forEach((box, i) => {

@@ -58,15 +58,15 @@ export function Sidebar({ usuario, planes, totalDisponibles, onLogout }: Sidebar
 
       <hr className="mb-6" />
 
-      {/* Aportes Disponibles */}
+      {/* Tokens Disponibles */}
       <div className="bg-[#F9F9F9] rounded-xl p-4 mb-4">
-        <p className="text-xs text-[#666666] uppercase tracking-wider mb-1">Aportes Disponibles</p>
+        <p className="text-xs text-[#666666] uppercase tracking-wider mb-1">Tokens Disponibles</p>
         <p className="text-3xl font-bold text-[#1A1A2E]">{totalDisponibles.toLocaleString()}</p>
       </div>
 
       <div className="space-y-1 text-sm text-[#666666] mb-6">
-        <p>Próximo aporte: <span className="font-medium">Por definir</span></p>
-        <p>Último aporte: <span className="font-medium">{formatDate(lastVinculacion || null)}</span></p>
+        <p>Próximo token: <span className="font-medium">Por definir</span></p>
+        <p>Último token: <span className="font-medium">{formatDate(lastVinculacion || null)}</span></p>
       </div>
 
       {/* Acelerar Aportes */}
