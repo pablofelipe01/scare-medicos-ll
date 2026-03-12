@@ -86,7 +86,7 @@ export default function DashboardPage() {
     return <SkeletonDashboard />
   }
 
-  const { usuario, planes, totalDisponibles } = data
+  const { usuario, planes, totalDisponibles, totalReservados } = data
   const showBanner = !usuario.tokens_activados && planes.some((p) => p.estado === 'DISPONIBLES')
 
   // Initials for top bar avatar
@@ -103,7 +103,7 @@ export default function DashboardPage() {
       <Sidebar
         usuario={usuario}
         planes={planes}
-        totalDisponibles={totalDisponibles}
+        totalPorUsar={totalDisponibles + totalReservados}
         onLogout={handleLogout}
       />
 

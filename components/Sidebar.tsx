@@ -10,11 +10,11 @@ import { useToast } from '@/hooks/use-toast'
 interface SidebarProps {
   usuario: Usuario
   planes: PlanToken[]
-  totalDisponibles: number
+  totalPorUsar: number
   onLogout: () => void
 }
 
-export function Sidebar({ usuario, planes, totalDisponibles, onLogout }: SidebarProps) {
+export function Sidebar({ usuario, planes, totalPorUsar, onLogout }: SidebarProps) {
   const { toast } = useToast()
   const [changePinOpen, setChangePinOpen] = useState(false)
 
@@ -61,7 +61,7 @@ export function Sidebar({ usuario, planes, totalDisponibles, onLogout }: Sidebar
       {/* Tokens por Usar */}
       <div className="bg-[#F9F9F9] rounded-xl p-4 mb-4">
         <p className="text-xs text-[#666666] uppercase tracking-wider mb-1">Tokens por Usar</p>
-        <p className="text-3xl font-bold text-[#1A1A2E]">{totalDisponibles.toLocaleString()}</p>
+        <p className="text-3xl font-bold text-[#1A1A2E]">{totalPorUsar.toLocaleString()}</p>
       </div>
 
       <div className="space-y-1 text-sm text-[#666666] mb-6">
