@@ -6,6 +6,7 @@ import { formatDate } from '@/lib/format'
 import { AcelerarModal } from './AcelerarModal'
 import { ChangePinModal } from './ChangePinModal'
 import { useToast } from '@/hooks/use-toast'
+import { FileText, ChevronDown, ChevronUp } from 'lucide-react'
 
 interface SidebarProps {
   usuario: Usuario
@@ -17,6 +18,7 @@ interface SidebarProps {
 export function Sidebar({ usuario, planes, totalPorUsar, onLogout }: SidebarProps) {
   const { toast } = useToast()
   const [changePinOpen, setChangePinOpen] = useState(false)
+  const [docsOpen, setDocsOpen] = useState(false)
 
   // Obtener iniciales
   const initials = usuario.afiliado
@@ -54,6 +56,38 @@ export function Sidebar({ usuario, planes, totalPorUsar, onLogout }: SidebarProp
           Contrato N.{' '}
           <span className="text-[#6B5CE7] underline">{usuario.identificacion}</span>
         </p>
+      </div>
+
+      {/* Documentos */}
+      <div className="mb-6">
+        <button
+          onClick={() => setDocsOpen(!docsOpen)}
+          className="flex items-center justify-between w-full text-sm font-medium text-[#1A1A2E] hover:text-[#6B5CE7] transition-colors"
+        >
+          <span>Documentos</span>
+          {docsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        </button>
+        {docsOpen && (
+          <div className="mt-3 space-y-2">
+            {[
+              { label: 'Contrato de Mandato', url: '#' },
+              { label: 'Autorización Datos Personales FEVS', url: '#' },
+              { label: 'Solicitud de Integración AES Colectivo', url: '#' },
+              { label: 'Contrato de Tokenización', url: '#' },
+            ].map((doc) => (
+              <a
+                key={doc.label}
+                href={doc.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#F9F9F9] hover:bg-[#EDE9FF] text-xs text-[#666666] hover:text-[#6B5CE7] transition-colors"
+              >
+                <FileText className="h-3.5 w-3.5 flex-shrink-0" />
+                <span>{doc.label}</span>
+              </a>
+            ))}
+          </div>
+        )}
       </div>
 
       <hr className="mb-6" />
