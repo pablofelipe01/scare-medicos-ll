@@ -76,9 +76,11 @@ export function PlanTabs({ planes, usuario }: PlanTabsProps) {
       </div>
 
       {/* Acelerar Button */}
-      <div className="flex justify-end">
-        <AcelerarModal />
-      </div>
+      {usuario.tipo !== 'ANTIGUO' && (
+        <div className="flex justify-end">
+          <AcelerarModal />
+        </div>
+      )}
 
       {/* Progress Bar */}
       <div className="bg-white rounded-xl p-6">
@@ -107,10 +109,12 @@ export function PlanTabs({ planes, usuario }: PlanTabsProps) {
       </button> */}
 
       {/* Chart */}
-      <div className="bg-white rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-[#1A1A2E] mb-4">Tokens Realizados</h3>
-        <TokenChart planes={activePlanes} />
-      </div>
+      {usuario.tipo !== 'ANTIGUO' && (
+        <div className="bg-white rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-[#1A1A2E] mb-4">Tokens Realizados</h3>
+          <TokenChart planes={activePlanes} />
+        </div>
+      )}
 
       {/* Descargar Tokens - comentado hasta tener info final */}
       {/* <button

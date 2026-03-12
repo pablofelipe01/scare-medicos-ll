@@ -162,8 +162,8 @@ export function Sidebar({ usuario, planes, totalPorUsar, onLogout }: SidebarProp
         <p>Último token: <span className="font-medium">{formatDate(lastVinculacion || null)}</span></p>
       </div>
 
-      {/* Acelerar Aportes */}
-      <AcelerarModal />
+      {/* Acelerar Tokens */}
+      {usuario.tipo !== 'ANTIGUO' && <AcelerarModal />}
 
       {/* Footer links */}
       <div className="mt-auto pt-6 space-y-3">
