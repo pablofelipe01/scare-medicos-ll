@@ -13,6 +13,7 @@ export interface Usuario {
   tokens_activados: boolean
   fecha_creacion: string
   fecha_activacion: string | null
+  avatar_url: string | null
   codigo_configurado: boolean
 }
 

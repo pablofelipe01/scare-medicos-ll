@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Usuario, PlanToken } from '@/types'
 import { formatDate } from '@/lib/format'
 import { AcelerarModal } from './AcelerarModal'
 import { ChangePinModal } from './ChangePinModal'
 import { useToast } from '@/hooks/use-toast'
-import { FileText, ChevronDown, ChevronUp } from 'lucide-react'
+import { FileText, ChevronDown, ChevronUp, Camera } from 'lucide-react'
 
 interface SidebarProps {
   usuario: Usuario
@@ -19,6 +19,36 @@ export function Sidebar({ usuario, planes, totalPorUsar, onLogout }: SidebarProp
   const { toast } = useToast()
   const [changePinOpen, setChangePinOpen] = useState(false)
   const [docsOpen, setDocsOpen] = useState(false)
+  const [avatarUrl, setAvatarUrl] = useState(usuario.avatar_url)
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('identificacion', usuario.identificacion)
+
+      const res = await fetch('/api/user/avatar', { method: 'POST', body: formData })
+      const data = await res.json()
+
+      if (res.ok) {
+        setAvatarUrl(data.avatar_url)
+        toast({ title: 'Foto actualizada' })
+      } else {
+        toast({ title: 'Error', description: data.error, variant: 'destructive' })
+      }
+    } catch {
+      toast({ title: 'Error', description: 'No se pudo subir la foto', variant: 'destructive' })
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
 
   // Obtener iniciales
   const initials = usuario.afiliado
@@ -38,9 +68,38 @@ export function Sidebar({ usuario, planes, totalPorUsar, onLogout }: SidebarProp
     <aside className="w-full lg:w-[280px] bg-white lg:min-h-screen p-6 flex flex-col border-r border-gray-100">
       {/* Avatar */}
       <div className="flex flex-col items-center mb-6">
-        <div className="w-20 h-20 rounded-full bg-[#EDE9FF] flex items-center justify-center mb-3">
-          <span className="text-2xl font-bold text-[#6B5CE7]">{initials}</span>
-        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleAvatarUpload}
+          className="hidden"
+        />
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+          className="relative group w-20 h-20 rounded-full mb-3"
+        >
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={usuario.afiliado}
+              className="w-20 h-20 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-20 h-20 rounded-full bg-[#EDE9FF] flex items-center justify-center">
+              <span className="text-2xl font-bold text-[#6B5CE7]">{initials}</span>
+            </div>
+          )}
+          <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <Camera className="h-5 w-5 text-white" />
+          </div>
+          {uploading && (
+            <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            </div>
+          )}
+        </button>
         <h2 className="text-lg font-bold text-[#1A1A2E] text-center">{usuario.afiliado}</h2>
         {(usuario.profesion || usuario.especialidad) && (
           <p className="text-sm italic text-[#666666] text-center">

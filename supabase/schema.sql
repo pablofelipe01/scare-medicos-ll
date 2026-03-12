@@ -18,7 +18,8 @@ CREATE TABLE usuarios (
   fecha_creacion    TIMESTAMP DEFAULT NOW(),
   fecha_activacion  TIMESTAMP,
   codigo_hash       TEXT,
-  recovery_hash     TEXT
+  recovery_hash     TEXT,
+  avatar_url        VARCHAR
 );
 
 -- Enum para estado de tokens
