@@ -10,7 +10,7 @@ export function ActivateTokensBanner({ onActivate }: ActivateTokensBannerProps) 
   return (
     <div className="bg-[#EDE9FF] border-l-4 border-[#6B5CE7] rounded-r-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
       <p className="text-sm text-[#1A1A2E]">
-        Tienes tokens SMT listos para activar en Polygon blockchain
+        Tienes tokens listos para activar
       </p>
       <Button
         onClick={onActivate}
