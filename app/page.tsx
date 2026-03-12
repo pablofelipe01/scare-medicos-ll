@@ -6,16 +6,16 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
 
-type Step = 'CEDULA' | 'LOGIN' | 'SETUP_PIN' | 'SHOW_PHRASE' | 'RECOVERY'
+type Step = 'CEDULA' | 'LOGIN' | 'SETUP_PIN' | 'SHOW_PHRASE' | 'FORGOT_PIN' | 'RESET_PIN'
 
 export default function LoginPage() {
   const [step, setStep] = useState<Step>('CEDULA')
   const [cedula, setCedula] = useState('')
   const [pin, setPin] = useState('')
   const [pinConfirm, setPinConfirm] = useState('')
-  const [frase, setFrase] = useState('')
   const [fraseGenerada, setFraseGenerada] = useState('')
   const [nuevoPin, setNuevoPin] = useState('')
+  const [correoMasked, setCorreoMasked] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -85,6 +85,18 @@ export default function LoginPage() {
         return
       }
 
+      const data = await res.json()
+
+      if (data.provisional) {
+        // PIN provisional válido — pedir nuevo PIN permanente
+        setPin('')
+        setNuevoPin('')
+        setPinConfirm('')
+        setStep('RESET_PIN')
+        setLoading(false)
+        return
+      }
+
       sessionStorage.setItem('cedula_activa', cedula.trim())
       router.push('/dashboard')
     } catch {
@@ -134,13 +146,51 @@ export default function LoginPage() {
     }
   }
 
-  // Paso 2c: recuperar con frase
-  const handleRecover = async (e: React.FormEvent) => {
+  // Paso: Enviar PIN provisional por correo
+  const handleForgotPin = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!frase.trim() || !nuevoPin.trim()) return
+    if (!cedula.trim()) return
+
+    setLoading(true)
+    setError('')
+
+    try {
+      const res = await fetch('/api/auth/forgot-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identificacion: cedula.trim() }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error || 'Error al enviar correo.')
+        setLoading(false)
+        return
+      }
+
+      setCorreoMasked(data.correo)
+      setStep('LOGIN')
+      setError('')
+      setSuccess(`PIN provisional enviado a ${data.correo}. Válido por 15 minutos.`)
+    } catch {
+      setError('Error de conexión. Intenta nuevamente.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Paso: Crear nuevo PIN después de usar provisional
+  const handleResetPin = async (e: React.FormEvent) => {
+    e.preventDefault()
 
     if (nuevoPin.length !== 6) {
       setError('El PIN debe ser de 6 dígitos.')
+      return
+    }
+
+    if (nuevoPin !== pinConfirm) {
+      setError('Los PIN no coinciden.')
       return
     }
 
@@ -148,34 +198,24 @@ export default function LoginPage() {
     setError('')
 
     try {
-      const res = await fetch('/api/auth/recover', {
+      const res = await fetch('/api/auth/reset-pin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           identificacion: cedula.trim(),
-          frase: frase.trim().toLowerCase(),
           nuevoPin,
         }),
       })
 
-      if (res.status === 401) {
-        setError('Frase de recuperación incorrecta.')
-        setLoading(false)
-        return
-      }
-
       if (!res.ok) {
-        setError('Error al recuperar. Intenta nuevamente.')
+        const data = await res.json()
+        setError(data.error || 'Error al cambiar PIN.')
         setLoading(false)
         return
       }
 
-      setPin(nuevoPin)
-      setFrase('')
-      setNuevoPin('')
-      setStep('LOGIN')
-      setError('')
-      setSuccess('PIN cambiado correctamente. Ingresa con tu nuevo PIN.')
+      sessionStorage.setItem('cedula_activa', cedula.trim())
+      router.push('/dashboard')
     } catch {
       setError('Error de conexión. Intenta nuevamente.')
     } finally {
@@ -187,7 +227,6 @@ export default function LoginPage() {
     setStep('CEDULA')
     setPin('')
     setPinConfirm('')
-    setFrase('')
     setNuevoPin('')
     setError('')
   }
@@ -310,10 +349,10 @@ export default function LoginPage() {
                 Primera vez
               </button>
               <button
-                onClick={() => { setStep('RECOVERY'); setPin(''); setError('') }}
+                onClick={() => { setStep('FORGOT_PIN'); setPin(''); setError(''); setSuccess('') }}
                 className="text-sm text-[#6B5CE7] hover:underline"
               >
-                Olvide mi PIN
+                Olvidé mi PIN
               </button>
             </div>
           </>
@@ -418,33 +457,73 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* PASO 2c: Recuperacion */}
-        {step === 'RECOVERY' && (
+        {/* PASO: Olvidé mi PIN — enviar correo */}
+        {step === 'FORGOT_PIN' && (
           <>
             <div className="text-center mb-6">
               <h2 className="text-xl font-semibold text-[#1A1A2E] mb-2">
-                Recupera tu cuenta
+                Recupera tu PIN
               </h2>
               <p className="text-sm text-[#666666]">
-                Ingresa tu frase de recuperación y elige un nuevo PIN
+                Te enviaremos un PIN provisional a tu correo registrado
               </p>
             </div>
-            <form onSubmit={handleRecover} className="space-y-4">
-              <div>
-                <label className="text-xs text-[#666666] mb-1 block">Frase de recuperación</label>
-                <Input
-                  type="text"
-                  placeholder="palabra1 palabra2 palabra3 palabra4 palabra5"
-                  value={frase}
-                  onChange={(e) => {
-                    setFrase(e.target.value)
-                    setError('')
-                  }}
-                  className="h-12 text-base text-center border-gray-300 focus:border-[#6B5CE7] focus:ring-[#6B5CE7]"
-                  disabled={loading}
-                  autoFocus
-                />
+            <form onSubmit={handleForgotPin} className="space-y-4">
+              <Input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder="Número de cédula"
+                value={cedula}
+                onChange={(e) => {
+                  setCedula(e.target.value.replace(/\D/g, ''))
+                  setError('')
+                }}
+                className="h-12 text-lg text-center border-gray-300 focus:border-[#6B5CE7] focus:ring-[#6B5CE7]"
+                disabled={loading}
+                autoFocus
+              />
+              <Button
+                type="submit"
+                disabled={loading || !cedula.trim()}
+                className="w-full h-12 text-base font-semibold bg-[#6B5CE7] hover:bg-[#5A4BD6] text-white"
+              >
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Enviando...
+                  </span>
+                ) : (
+                  'Enviar PIN provisional'
+                )}
+              </Button>
+            </form>
+            <div className="mt-4">
+              <button
+                onClick={() => { setStep('LOGIN'); setError('') }}
+                className="text-sm text-[#666666] hover:text-[#1A1A2E]"
+              >
+                Volver al login
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* PASO: Crear nuevo PIN después de provisional */}
+        {step === 'RESET_PIN' && (
+          <>
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl text-green-600">&#10003;</span>
               </div>
+              <h2 className="text-xl font-semibold text-[#1A1A2E] mb-2">
+                Crea tu nuevo PIN
+              </h2>
+              <p className="text-sm text-[#666666]">
+                Elige un nuevo PIN de 6 dígitos para tu cuenta
+              </p>
+            </div>
+            <form onSubmit={handleResetPin} className="space-y-4">
               <div>
                 <label className="text-xs text-[#666666] mb-1 block">Nuevo PIN</label>
                 <Input
@@ -459,31 +538,40 @@ export default function LoginPage() {
                   }}
                   className="h-12 text-2xl text-center tracking-[0.5em] border-gray-300 focus:border-[#6B5CE7] focus:ring-[#6B5CE7]"
                   disabled={loading}
+                  autoFocus
+                />
+              </div>
+              <div>
+                <label className="text-xs text-[#666666] mb-1 block">Confirmar PIN</label>
+                <Input
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={6}
+                  placeholder="Repetir 6 dígitos"
+                  value={pinConfirm}
+                  onChange={(e) => {
+                    setPinConfirm(e.target.value.replace(/\D/g, '').slice(0, 6))
+                    setError('')
+                  }}
+                  className="h-12 text-2xl text-center tracking-[0.5em] border-gray-300 focus:border-[#6B5CE7] focus:ring-[#6B5CE7]"
+                  disabled={loading}
                 />
               </div>
               <Button
                 type="submit"
-                disabled={loading || !frase.trim() || nuevoPin.length !== 6}
+                disabled={loading || nuevoPin.length !== 6 || pinConfirm.length !== 6}
                 className="w-full h-12 text-base font-semibold bg-[#6B5CE7] hover:bg-[#5A4BD6] text-white"
               >
                 {loading ? (
                   <span className="flex items-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Verificando...
+                    Guardando...
                   </span>
                 ) : (
-                  'Recuperar y crear nuevo PIN'
+                  'Guardar nuevo PIN'
                 )}
               </Button>
             </form>
-            <div className="mt-4">
-              <button
-                onClick={() => { setStep('LOGIN'); setFrase(''); setNuevoPin(''); setError('') }}
-                className="text-sm text-[#666666] hover:text-[#1A1A2E]"
-              >
-                Volver al login
-              </button>
-            </div>
           </>
         )}
 

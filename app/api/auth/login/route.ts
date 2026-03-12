@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
     const { data: usuario, error: userError } = await supabaseAdmin
       .from('usuarios')
-      .select('codigo_hash')
+      .select('codigo_hash, pin_provisional_hash, pin_provisional_expira')
       .eq('identificacion', String(identificacion))
       .single()
 
@@ -27,12 +27,30 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Intentar con PIN permanente
     const valid = await verifyValue(pin, usuario.codigo_hash)
-    if (!valid) {
-      return NextResponse.json({ error: 'PIN incorrecto' }, { status: 401 })
+    if (valid) {
+      return NextResponse.json({ success: true })
     }
 
-    return NextResponse.json({ success: true })
+    // Intentar con PIN provisional
+    if (usuario.pin_provisional_hash && usuario.pin_provisional_expira) {
+      const expira = new Date(usuario.pin_provisional_expira)
+      if (expira > new Date()) {
+        const validProvisional = await verifyValue(pin, usuario.pin_provisional_hash)
+        if (validProvisional) {
+          // Limpiar PIN provisional
+          await supabaseAdmin
+            .from('usuarios')
+            .update({ pin_provisional_hash: null, pin_provisional_expira: null })
+            .eq('identificacion', String(identificacion))
+
+          return NextResponse.json({ success: true, provisional: true })
+        }
+      }
+    }
+
+    return NextResponse.json({ error: 'PIN incorrecto' }, { status: 401 })
   } catch (error) {
     console.error('Error in auth/login:', error)
     return NextResponse.json({ error: 'Error interno' }, { status: 500 })
