@@ -40,8 +40,10 @@ export function Sidebar({ usuario, planes, totalDisponibles, onLogout }: Sidebar
           <span className="text-2xl font-bold text-[#6B5CE7]">{initials}</span>
         </div>
         <h2 className="text-lg font-bold text-[#1A1A2E] text-center">{usuario.afiliado}</h2>
-        {usuario.especialidad && (
-          <p className="text-sm italic text-[#666666] text-center">{usuario.especialidad}</p>
+        {(usuario.profesion || usuario.especialidad) && (
+          <p className="text-sm italic text-[#666666] text-center">
+            {[usuario.profesion, usuario.especialidad].filter(Boolean).join(' — ')}
+          </p>
         )}
       </div>
 
