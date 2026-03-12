@@ -89,8 +89,8 @@ export function PlanTabs({ planes, usuario }: PlanTabsProps) {
         />
       </div>
 
-      {/* Descargar Certificado */}
-      <button
+      {/* Descargar Certificado - comentado hasta tener info final */}
+      {/* <button
         onClick={() =>
           generateCertificate({
             usuario,
@@ -104,7 +104,7 @@ export function PlanTabs({ planes, usuario }: PlanTabsProps) {
       >
         <Download className="h-4 w-4" />
         Descargar Certificado
-      </button>
+      </button> */}
 
       {/* Chart */}
       <div className="bg-white rounded-xl p-6">
@@ -112,14 +112,14 @@ export function PlanTabs({ planes, usuario }: PlanTabsProps) {
         <TokenChart planes={activePlanes} />
       </div>
 
-      {/* Descargar Aportes */}
-      <button
+      {/* Descargar Tokens - comentado hasta tener info final */}
+      {/* <button
         onClick={handleProximamente}
         className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm text-[#666666] hover:bg-gray-50 transition-colors"
       >
         <Download className="h-4 w-4" />
         Descargar Tokens
-      </button>
+      </button> */}
     </div>
   )
 }
