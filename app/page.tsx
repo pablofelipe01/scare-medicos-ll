@@ -282,7 +282,7 @@ export default function LoginPage() {
                 type="password"
                 inputMode="numeric"
                 maxLength={6}
-                placeholder="PIN de 6 dígitos"
+                placeholder="6 números"
                 value={pin}
                 onChange={(e) => {
                   setPin(e.target.value.replace(/\D/g, '').slice(0, 6))
@@ -339,7 +339,7 @@ export default function LoginPage() {
                   type="password"
                   inputMode="numeric"
                   maxLength={6}
-                  placeholder="6 dígitos"
+                  placeholder="6 números"
                   value={pin}
                   onChange={(e) => {
                     setPin(e.target.value.replace(/\D/g, '').slice(0, 6))
@@ -453,7 +453,7 @@ export default function LoginPage() {
                   type="password"
                   inputMode="numeric"
                   maxLength={6}
-                  placeholder="6 dígitos"
+                  placeholder="6 números"
                   value={nuevoPin}
                   onChange={(e) => {
                     setNuevoPin(e.target.value.replace(/\D/g, '').slice(0, 6))

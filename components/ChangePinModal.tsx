@@ -84,7 +84,7 @@ export function ChangePinModal({ open, onOpenChange, identificacion }: ChangePin
               type="password"
               inputMode="numeric"
               maxLength={6}
-              placeholder="6 dígitos"
+              placeholder="6 números"
               value={pinActual}
               onChange={(e) => { setPinActual(e.target.value.replace(/\D/g, '').slice(0, 6)); setError('') }}
               className="h-11 text-xl text-center tracking-[0.5em]"
@@ -97,7 +97,7 @@ export function ChangePinModal({ open, onOpenChange, identificacion }: ChangePin
               type="password"
               inputMode="numeric"
               maxLength={6}
-              placeholder="6 dígitos"
+              placeholder="6 números"
               value={nuevoPin}
               onChange={(e) => { setNuevoPin(e.target.value.replace(/\D/g, '').slice(0, 6)); setError('') }}
               className="h-11 text-xl text-center tracking-[0.5em]"
@@ -110,7 +110,7 @@ export function ChangePinModal({ open, onOpenChange, identificacion }: ChangePin
               type="password"
               inputMode="numeric"
               maxLength={6}
-              placeholder="6 dígitos"
+              placeholder="6 números"
               value={confirmPin}
               onChange={(e) => { setConfirmPin(e.target.value.replace(/\D/g, '').slice(0, 6)); setError('') }}
               className="h-11 text-xl text-center tracking-[0.5em]"
