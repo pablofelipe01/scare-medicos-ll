@@ -7,11 +7,11 @@ export async function POST(request: NextRequest) {
     const { identificacion, pin } = await request.json()
 
     if (!identificacion || !pin) {
-      return NextResponse.json({ error: 'Cedula y PIN son requeridos' }, { status: 400 })
+      return NextResponse.json({ error: 'Cédula y PIN son requeridos' }, { status: 400 })
     }
 
     if (!/^\d{6}$/.test(pin)) {
-      return NextResponse.json({ error: 'El PIN debe ser de 6 digitos' }, { status: 400 })
+      return NextResponse.json({ error: 'El PIN debe ser de 6 dígitos' }, { status: 400 })
     }
 
     // Verificar que el usuario existe y no tiene codigo configurado

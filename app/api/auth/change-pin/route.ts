@@ -8,13 +8,13 @@ export async function POST(request: NextRequest) {
 
     if (!identificacion || !pinActual || !nuevoPin) {
       return NextResponse.json(
-        { error: 'Cedula, PIN actual y nuevo PIN son requeridos' },
+        { error: 'Cédula, PIN actual y nuevo PIN son requeridos' },
         { status: 400 }
       )
     }
 
     if (!/^\d{6}$/.test(nuevoPin)) {
-      return NextResponse.json({ error: 'El PIN debe ser de 6 digitos' }, { status: 400 })
+      return NextResponse.json({ error: 'El PIN debe ser de 6 dígitos' }, { status: 400 })
     }
 
     const { data: usuario, error: userError } = await supabaseAdmin

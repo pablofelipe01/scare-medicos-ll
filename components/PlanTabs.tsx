@@ -36,8 +36,8 @@ export function PlanTabs({ planes, usuario }: PlanTabsProps) {
 
   const handleProximamente = () => {
     toast({
-      title: 'Proximamente',
-      description: 'Funcion disponible proximamente.',
+      title: 'Próximamente',
+      description: 'Función disponible próximamente.',
     })
   }
 

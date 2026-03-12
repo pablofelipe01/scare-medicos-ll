@@ -8,13 +8,13 @@ export async function POST(request: NextRequest) {
 
     if (!identificacion || !frase || !nuevoPin) {
       return NextResponse.json(
-        { error: 'Cedula, frase y nuevo PIN son requeridos' },
+        { error: 'Cédula, frase y nuevo PIN son requeridos' },
         { status: 400 }
       )
     }
 
     if (!/^\d{6}$/.test(nuevoPin)) {
-      return NextResponse.json({ error: 'El PIN debe ser de 6 digitos' }, { status: 400 })
+      return NextResponse.json({ error: 'El PIN debe ser de 6 dígitos' }, { status: 400 })
     }
 
     const { data: usuario, error: userError } = await supabaseAdmin
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     // Verificar frase de recuperacion
     const valid = await verifyValue(frase.trim().toLowerCase(), usuario.recovery_hash)
     if (!valid) {
-      return NextResponse.json({ error: 'Frase de recuperacion incorrecta' }, { status: 401 })
+      return NextResponse.json({ error: 'Frase de recuperación incorrecta' }, { status: 401 })
     }
 
     // Hashear nuevo PIN

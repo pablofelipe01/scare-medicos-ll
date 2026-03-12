@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
     const { identificacion, pin } = await request.json()
 
     if (!identificacion || !pin) {
-      return NextResponse.json({ error: 'Cedula y PIN son requeridos' }, { status: 400 })
+      return NextResponse.json({ error: 'Cédula y PIN son requeridos' }, { status: 400 })
     }
 
     const { data: usuario, error: userError } = await supabaseAdmin

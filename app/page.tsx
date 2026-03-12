@@ -33,7 +33,7 @@ export default function LoginPage() {
       const res = await fetch(`/api/user/${cedula.trim()}`)
 
       if (res.status === 404) {
-        setError('Cedula no encontrada. Contacta a SCARE.')
+        setError('Cédula no encontrada. Contacta a ARGESSA.')
         setLoading(false)
         return
       }
@@ -52,7 +52,7 @@ export default function LoginPage() {
         setStep('SETUP_PIN')
       }
     } catch {
-      setError('Error de conexion. Intenta nuevamente.')
+      setError('Error de conexión. Intenta nuevamente.')
     } finally {
       setLoading(false)
     }
@@ -88,7 +88,7 @@ export default function LoginPage() {
       sessionStorage.setItem('cedula_activa', cedula.trim())
       router.push('/dashboard')
     } catch {
-      setError('Error de conexion. Intenta nuevamente.')
+      setError('Error de conexión. Intenta nuevamente.')
       setLoading(false)
     }
   }
@@ -98,7 +98,7 @@ export default function LoginPage() {
     e.preventDefault()
 
     if (pin.length !== 6) {
-      setError('El PIN debe ser de 6 digitos.')
+      setError('El PIN debe ser de 6 dígitos.')
       return
     }
 
@@ -128,7 +128,7 @@ export default function LoginPage() {
       setFraseGenerada(data.fraseRecuperacion)
       setStep('SHOW_PHRASE')
     } catch {
-      setError('Error de conexion. Intenta nuevamente.')
+      setError('Error de conexión. Intenta nuevamente.')
     } finally {
       setLoading(false)
     }
@@ -140,7 +140,7 @@ export default function LoginPage() {
     if (!frase.trim() || !nuevoPin.trim()) return
 
     if (nuevoPin.length !== 6) {
-      setError('El PIN debe ser de 6 digitos.')
+      setError('El PIN debe ser de 6 dígitos.')
       return
     }
 
@@ -159,7 +159,7 @@ export default function LoginPage() {
       })
 
       if (res.status === 401) {
-        setError('Frase de recuperacion incorrecta.')
+        setError('Frase de recuperación incorrecta.')
         setLoading(false)
         return
       }
@@ -177,7 +177,7 @@ export default function LoginPage() {
       setError('')
       setSuccess('PIN cambiado correctamente. Ingresa con tu nuevo PIN.')
     } catch {
-      setError('Error de conexion. Intenta nuevamente.')
+      setError('Error de conexión. Intenta nuevamente.')
     } finally {
       setLoading(false)
     }
@@ -207,7 +207,7 @@ export default function LoginPage() {
           <>
             <div className="text-center mb-6">
               <h2 className="text-xl font-semibold text-[#1A1A2E] mb-2">
-                Ingresa tu numero de cedula
+                Ingresa tu número de cédula
               </h2>
               <p className="text-sm text-[#666666]">
                 Accede a tu billetera de aportes on-chain
@@ -218,7 +218,7 @@ export default function LoginPage() {
                 type="text"
                 inputMode="numeric"
                 pattern="[0-9]*"
-                placeholder="Numero de cedula"
+                placeholder="Número de cédula"
                 value={cedula}
                 onChange={(e) => {
                   setCedula(e.target.value.replace(/\D/g, ''))
@@ -261,7 +261,7 @@ export default function LoginPage() {
                 Ingresa a tu cuenta
               </h2>
               <p className="text-sm text-[#666666]">
-                Cedula y PIN de 6 digitos
+                Cédula y PIN de 6 dígitos
               </p>
             </div>
             <form onSubmit={handleLogin} className="space-y-4">
@@ -269,7 +269,7 @@ export default function LoginPage() {
                 type="text"
                 inputMode="numeric"
                 pattern="[0-9]*"
-                placeholder="Numero de cedula"
+                placeholder="Número de cédula"
                 value={cedula}
                 onChange={(e) => {
                   setCedula(e.target.value.replace(/\D/g, ''))
@@ -282,7 +282,7 @@ export default function LoginPage() {
                 type="password"
                 inputMode="numeric"
                 maxLength={6}
-                placeholder="PIN de 6 digitos"
+                placeholder="PIN de 6 dígitos"
                 value={pin}
                 onChange={(e) => {
                   setPin(e.target.value.replace(/\D/g, '').slice(0, 6))
@@ -329,7 +329,7 @@ export default function LoginPage() {
                 Crea tu PIN de acceso
               </h2>
               <p className="text-sm text-[#666666]">
-                Elige un PIN de 6 digitos para ingresar a tu cuenta
+                Elige un PIN de 6 dígitos para ingresar a tu cuenta
               </p>
             </div>
             <form onSubmit={handleSetupPin} className="space-y-4">
@@ -339,7 +339,7 @@ export default function LoginPage() {
                   type="password"
                   inputMode="numeric"
                   maxLength={6}
-                  placeholder="6 digitos"
+                  placeholder="6 dígitos"
                   value={pin}
                   onChange={(e) => {
                     setPin(e.target.value.replace(/\D/g, '').slice(0, 6))
@@ -383,13 +383,13 @@ export default function LoginPage() {
             </form>
             <div className="mt-4">
               <button onClick={handleBack} className="text-sm text-[#666666] hover:text-[#1A1A2E]">
-                Cambiar cedula
+                Cambiar cédula
               </button>
             </div>
           </>
         )}
 
-        {/* PASO: Mostrar frase de recuperacion */}
+        {/* PASO: Mostrar frase de recuperación */}
         {step === 'SHOW_PHRASE' && (
           <div className="text-center">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -399,10 +399,10 @@ export default function LoginPage() {
               PIN creado exitosamente
             </h2>
             <p className="text-sm text-[#666666] mb-4">
-              Guarda esta frase de recuperacion en un lugar seguro. La necesitaras si olvidas tu PIN.
+              Guarda esta frase de recuperación en un lugar seguro. La necesitarás si olvidas tu PIN.
             </p>
             <div className="bg-[#FFF8E1] border border-[#FFE082] rounded-xl p-5 mb-6">
-              <p className="text-xs text-[#666666] uppercase tracking-wider mb-2">Frase de recuperacion</p>
+              <p className="text-xs text-[#666666] uppercase tracking-wider mb-2">Frase de recuperación</p>
               <p className="text-lg font-bold text-[#1A1A2E] leading-relaxed">{fraseGenerada}</p>
             </div>
             <p className="text-xs text-red-500 mb-6">
@@ -428,12 +428,12 @@ export default function LoginPage() {
                 Recupera tu cuenta
               </h2>
               <p className="text-sm text-[#666666]">
-                Ingresa tu frase de recuperacion y elige un nuevo PIN
+                Ingresa tu frase de recuperación y elige un nuevo PIN
               </p>
             </div>
             <form onSubmit={handleRecover} className="space-y-4">
               <div>
-                <label className="text-xs text-[#666666] mb-1 block">Frase de recuperacion</label>
+                <label className="text-xs text-[#666666] mb-1 block">Frase de recuperación</label>
                 <Input
                   type="text"
                   placeholder="palabra1 palabra2 palabra3 palabra4 palabra5"
@@ -453,7 +453,7 @@ export default function LoginPage() {
                   type="password"
                   inputMode="numeric"
                   maxLength={6}
-                  placeholder="6 digitos"
+                  placeholder="6 dígitos"
                   value={nuevoPin}
                   onChange={(e) => {
                     setNuevoPin(e.target.value.replace(/\D/g, '').slice(0, 6))

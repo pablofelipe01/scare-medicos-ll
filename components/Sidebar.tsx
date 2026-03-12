@@ -63,8 +63,8 @@ export function Sidebar({ usuario, planes, totalDisponibles, onLogout }: Sidebar
       </div>
 
       <div className="space-y-1 text-sm text-[#666666] mb-6">
-        <p>Proximo aporte: <span className="font-medium">Por definir</span></p>
-        <p>Ultimo aporte: <span className="font-medium">{formatDate(lastVinculacion || null)}</span></p>
+        <p>Próximo aporte: <span className="font-medium">Por definir</span></p>
+        <p>Último aporte: <span className="font-medium">{formatDate(lastVinculacion || null)}</span></p>
       </div>
 
       {/* Acelerar Aportes */}
@@ -82,7 +82,7 @@ export function Sidebar({ usuario, planes, totalDisponibles, onLogout }: Sidebar
           onClick={onLogout}
           className="text-sm text-[#666666] hover:text-[#1A1A2E] block"
         >
-          Cerrar Sesion
+          Cerrar Sesión
         </button>
       </div>
 

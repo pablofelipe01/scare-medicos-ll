@@ -25,7 +25,7 @@ export function ChangePinModal({ open, onOpenChange, identificacion }: ChangePin
     e.preventDefault()
 
     if (nuevoPin.length !== 6) {
-      setError('El nuevo PIN debe ser de 6 digitos.')
+      setError('El nuevo PIN debe ser de 6 dígitos.')
       return
     }
 
@@ -62,7 +62,7 @@ export function ChangePinModal({ open, onOpenChange, identificacion }: ChangePin
       setConfirmPin('')
       onOpenChange(false)
     } catch {
-      setError('Error de conexion.')
+      setError('Error de conexión.')
     } finally {
       setLoading(false)
     }
@@ -84,7 +84,7 @@ export function ChangePinModal({ open, onOpenChange, identificacion }: ChangePin
               type="password"
               inputMode="numeric"
               maxLength={6}
-              placeholder="6 digitos"
+              placeholder="6 dígitos"
               value={pinActual}
               onChange={(e) => { setPinActual(e.target.value.replace(/\D/g, '').slice(0, 6)); setError('') }}
               className="h-11 text-xl text-center tracking-[0.5em]"
@@ -97,7 +97,7 @@ export function ChangePinModal({ open, onOpenChange, identificacion }: ChangePin
               type="password"
               inputMode="numeric"
               maxLength={6}
-              placeholder="6 digitos"
+              placeholder="6 dígitos"
               value={nuevoPin}
               onChange={(e) => { setNuevoPin(e.target.value.replace(/\D/g, '').slice(0, 6)); setError('') }}
               className="h-11 text-xl text-center tracking-[0.5em]"
@@ -110,7 +110,7 @@ export function ChangePinModal({ open, onOpenChange, identificacion }: ChangePin
               type="password"
               inputMode="numeric"
               maxLength={6}
-              placeholder="6 digitos"
+              placeholder="6 dígitos"
               value={confirmPin}
               onChange={(e) => { setConfirmPin(e.target.value.replace(/\D/g, '').slice(0, 6)); setError('') }}
               className="h-11 text-xl text-center tracking-[0.5em]"
