@@ -49,7 +49,7 @@ export function Sidebar({ usuario, planes, totalDisponibles, onLogout }: Sidebar
 
       {/* Info */}
       <div className="space-y-1 mb-6 text-sm text-[#666666]">
-        <p>Afiliado desde: {formatDate(usuario.fecha_creacion)}</p>
+        <p>Integrado desde: {formatDate(usuario.fecha_creacion)}</p>
         <p>
           Contrato N.{' '}
           <span className="text-[#6B5CE7] underline">{usuario.identificacion}</span>
