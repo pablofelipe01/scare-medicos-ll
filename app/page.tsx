@@ -196,10 +196,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-[#F5F5F5] px-4">
       <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-sm p-8">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-[#1A1A2E]">
-            Sylicon<span className="text-[#6B5CE7]">.</span>
-          </h1>
+        <div className="flex justify-center mb-8">
+          <img src="/Negativo.png" alt="TokBox" className="h-10" />
         </div>
 
         {/* PASO 1: Cedula */}

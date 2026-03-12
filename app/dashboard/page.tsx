@@ -111,9 +111,7 @@ export default function DashboardPage() {
       <main className="flex-1 p-6 lg:p-8 overflow-auto">
         {/* Top Bar */}
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-[#1A1A2E]">
-            Sylicon<span className="text-[#6B5CE7]">.</span>
-          </h1>
+          <img src="/Negativo.png" alt="TokBox" className="h-8" />
           <div className="w-10 h-10 rounded-full bg-[#EDE9FF] flex items-center justify-center">
             <span className="text-sm font-bold text-[#6B5CE7]">{initials}</span>
           </div>
