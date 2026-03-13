@@ -156,10 +156,12 @@ export function Sidebar({ usuario, planes, totalPorUsar, onLogout }: SidebarProp
         <p className="text-3xl font-bold text-[#1A1A2E]">{totalPorUsar.toLocaleString()}</p>
       </div>
 
-      <div className="space-y-1 text-sm text-[#666666] mb-6">
-        <p>Próximo token: <span className="font-medium">Por definir</span></p>
-        <p>Último token: <span className="font-medium">{formatDate(lastVinculacion || null)}</span></p>
-      </div>
+      {usuario.tipo !== 'ANTIGUO' && (
+        <div className="space-y-1 text-sm text-[#666666] mb-6">
+          <p>Próximo token: <span className="font-medium">Por definir</span></p>
+          <p>Último token: <span className="font-medium">{formatDate(lastVinculacion || null)}</span></p>
+        </div>
+      )}
 
       {/* Footer links */}
       <div className="mt-auto pt-6 space-y-3">
