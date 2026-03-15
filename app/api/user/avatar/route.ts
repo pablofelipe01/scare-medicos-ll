@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { getSessionFromRequest, unauthorizedResponse } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
+    const session = getSessionFromRequest(request)
+    if (!session) return unauthorizedResponse()
+
     const formData = await request.formData()
     const file = formData.get('file') as File | null
-    const identificacion = formData.get('identificacion') as string | null
+    const identificacion = session.cedula
 
-    if (!file || !identificacion) {
-      return NextResponse.json({ error: 'Archivo e identificación requeridos' }, { status: 400 })
+    if (!file) {
+      return NextResponse.json({ error: 'Archivo requerido' }, { status: 400 })
     }
 
     // Validar tipo de archivo

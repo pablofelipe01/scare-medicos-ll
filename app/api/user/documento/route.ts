@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
+import { getSessionFromRequest, unauthorizedResponse } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
+    const session = getSessionFromRequest(request)
+    if (!session) return unauthorizedResponse()
+
     const filekey = request.nextUrl.searchParams.get('filekey')
 
     if (!filekey) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
-import { generateRecoveryPhrase, hashValue } from '@/lib/access-code'
+import { hashValue } from '@/lib/access-code'
+import { setSessionCookie } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,22 +33,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generar frase de recuperacion
-    const fraseRecuperacion = generateRecoveryPhrase()
-
-    // Hashear PIN y frase
-    const [codigoHash, recoveryHash] = await Promise.all([
-      hashValue(pin),
-      hashValue(fraseRecuperacion),
-    ])
+    // Hashear PIN
+    const codigoHash = await hashValue(pin)
 
     // Guardar en DB
     const { error: updateError } = await supabaseAdmin
       .from('usuarios')
-      .update({
-        codigo_hash: codigoHash,
-        recovery_hash: recoveryHash,
-      })
+      .update({ codigo_hash: codigoHash })
       .eq('identificacion', String(identificacion))
 
     if (updateError) {
@@ -55,11 +47,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Error interno' }, { status: 500 })
     }
 
-    // Retornar la frase para mostrarla en pantalla (unica vez)
-    return NextResponse.json({
-      success: true,
-      fraseRecuperacion,
-    })
+    const response = NextResponse.json({ success: true })
+    return setSessionCookie(response, String(identificacion))
   } catch (error) {
     console.error('Error in auth/setup:', error)
     return NextResponse.json({ error: 'Error interno' }, { status: 500 })

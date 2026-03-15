@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { hashValue, verifyValue } from '@/lib/access-code'
+import { setSessionCookie } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,7 +52,8 @@ export async function POST(request: NextRequest) {
       })
       .eq('identificacion', String(identificacion))
 
-    return NextResponse.json({ success: true })
+    const response = NextResponse.json({ success: true })
+    return setSessionCookie(response, String(identificacion))
   } catch (error) {
     console.error('Error in reset-pin:', error)
     return NextResponse.json({ error: 'Error interno' }, { status: 500 })

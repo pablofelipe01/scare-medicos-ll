@@ -1,6 +1,5 @@
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
-import { WORDLIST_ES } from './wordlist-es'
 
 // Caracteres sin ambiguedad (sin 0/O, 1/l/I)
 const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'
@@ -13,15 +12,6 @@ export function generateAccessCode(): string {
       .join('')
   } while (!/[A-Z]/.test(code) || !/[0-9]/.test(code))
   return code
-}
-
-export function generateRecoveryPhrase(): string {
-  const words: string[] = []
-  for (let i = 0; i < 5; i++) {
-    const idx = crypto.randomInt(WORDLIST_ES.length)
-    words.push(WORDLIST_ES[idx])
-  }
-  return words.join(' ')
 }
 
 export async function hashValue(value: string): Promise<string> {

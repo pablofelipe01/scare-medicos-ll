@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { getMinterContract } from '@/lib/contract'
+import { getSessionFromRequest, unauthorizedResponse } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const { identificacion } = await request.json()
+    const session = getSessionFromRequest(request)
+    if (!session) return unauthorizedResponse()
 
-    if (!identificacion) {
-      return NextResponse.json(
-        { error: 'Bad Request', detail: 'identificacion is required' },
-        { status: 400 }
-      )
-    }
+    // Usar la cédula del JWT, no la del body
+    const identificacion = session.cedula
 
     // 1. Consultar usuario → obtener wallet_address
     const { data: usuario, error: userError } = await supabaseAdmin

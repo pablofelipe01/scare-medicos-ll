@@ -51,7 +51,8 @@ export default function DashboardPage() {
     fetchData(storedCedula)
   }, [fetchData, router])
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
     sessionStorage.removeItem('cedula_activa')
     router.push('/')
   }

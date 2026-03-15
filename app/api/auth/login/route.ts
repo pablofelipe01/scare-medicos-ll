@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { verifyValue, hashValue } from '@/lib/access-code'
+import { setSessionCookie } from '@/lib/auth'
 import crypto from 'crypto'
 
 export async function POST(request: NextRequest) {
@@ -31,7 +32,8 @@ export async function POST(request: NextRequest) {
     // Intentar con PIN permanente
     const valid = await verifyValue(pin, usuario.codigo_hash)
     if (valid) {
-      return NextResponse.json({ success: true })
+      const response = NextResponse.json({ success: true })
+      return setSessionCookie(response, String(identificacion))
     }
 
     // Intentar con PIN provisional

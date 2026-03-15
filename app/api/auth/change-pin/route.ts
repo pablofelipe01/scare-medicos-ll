@@ -1,14 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { verifyValue, hashValue } from '@/lib/access-code'
+import { getSessionFromRequest, unauthorizedResponse } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const { identificacion, pinActual, nuevoPin } = await request.json()
+    const session = getSessionFromRequest(request)
+    if (!session) return unauthorizedResponse()
 
-    if (!identificacion || !pinActual || !nuevoPin) {
+    const { pinActual, nuevoPin } = await request.json()
+    const identificacion = session.cedula
+
+    if (!pinActual || !nuevoPin) {
       return NextResponse.json(
-        { error: 'Cédula, PIN actual y nuevo PIN son requeridos' },
+        { error: 'PIN actual y nuevo PIN son requeridos' },
         { status: 400 }
       )
     }

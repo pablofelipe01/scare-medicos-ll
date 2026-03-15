@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { getSessionFromRequest, unauthorizedResponse } from '@/lib/auth'
 import type { DashboardData, PlanToken } from '@/types'
 
 export const dynamic = 'force-dynamic'
@@ -9,7 +10,14 @@ export async function GET(
   { params }: { params: { cedula: string } }
 ) {
   try {
+    const session = getSessionFromRequest(request)
+    if (!session) return unauthorizedResponse()
+
     const { cedula } = params
+
+    if (session.cedula !== cedula) {
+      return NextResponse.json({ error: 'Prohibido' }, { status: 403 })
+    }
 
     // Consultar usuario (sin exponer hashes ni tokens de reset)
     const { data: rawUsuario, error: userError } = await supabaseAdmin

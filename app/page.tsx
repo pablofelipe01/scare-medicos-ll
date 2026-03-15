@@ -6,14 +6,13 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
 
-type Step = 'CEDULA' | 'LOGIN' | 'SETUP_PIN' | 'SHOW_PHRASE' | 'FORGOT_PIN' | 'RESET_PIN'
+type Step = 'CEDULA' | 'LOGIN' | 'SETUP_PIN' | 'FORGOT_PIN' | 'RESET_PIN'
 
 export default function LoginPage() {
   const [step, setStep] = useState<Step>('CEDULA')
   const [cedula, setCedula] = useState('')
   const [pin, setPin] = useState('')
   const [pinConfirm, setPinConfirm] = useState('')
-  const [fraseGenerada, setFraseGenerada] = useState('')
   const [nuevoPin, setNuevoPin] = useState('')
   const [resetToken, setResetToken] = useState('')
   const [loading, setLoading] = useState(false)
@@ -137,9 +136,8 @@ export default function LoginPage() {
         return
       }
 
-      const data = await res.json()
-      setFraseGenerada(data.fraseRecuperacion)
-      setStep('SHOW_PHRASE')
+      sessionStorage.setItem('cedula_activa', cedula.trim())
+      router.push('/dashboard')
     } catch {
       setError('Error de conexión. Intenta nuevamente.')
     } finally {
@@ -425,37 +423,6 @@ export default function LoginPage() {
               </button>
             </div>
           </>
-        )}
-
-        {/* PASO: Mostrar frase de recuperación */}
-        {step === 'SHOW_PHRASE' && (
-          <div className="text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl text-green-600">✓</span>
-            </div>
-            <h2 className="text-xl font-semibold text-[#1A1A2E] mb-2">
-              PIN creado exitosamente
-            </h2>
-            <p className="text-sm text-[#666666] mb-4">
-              Guarda esta frase de recuperación en un lugar seguro. La necesitarás si olvidas tu PIN.
-            </p>
-            <div className="bg-[#FFF8E1] border border-[#FFE082] rounded-xl p-5 mb-6">
-              <p className="text-xs text-[#666666] uppercase tracking-wider mb-2">Frase de recuperación</p>
-              <p className="text-lg font-bold text-[#1A1A2E] leading-relaxed">{fraseGenerada}</p>
-            </div>
-            <p className="text-xs text-red-500 mb-6">
-              Esta frase no se mostrara de nuevo. Anotala antes de continuar.
-            </p>
-            <Button
-              onClick={() => {
-                sessionStorage.setItem('cedula_activa', cedula.trim())
-                router.push('/dashboard')
-              }}
-              className="w-full h-12 text-base font-semibold bg-[#6B5CE7] hover:bg-[#5A4BD6] text-white"
-            >
-              Ya la guarde, continuar
-            </Button>
-          </div>
         )}
 
         {/* PASO: Olvidé mi PIN — enviar correo */}
