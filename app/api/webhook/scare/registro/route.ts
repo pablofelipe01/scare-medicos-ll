@@ -46,9 +46,13 @@ export async function POST(request: NextRequest) {
         TOKENS: number
         ESTADO: string
       }>
+      DOCUMENTOS?: Array<{
+        NOMBRE: string
+        CONTENIDO: string
+      }>
     }
     const IDENTIFICACION = String(raw.IDENTIFICACION)
-    const { AFILIADO, PROFESION, ESPECIALIDAD, NOMBRE_PLAN, CORREO, TIPO, PLANES } = raw
+    const { AFILIADO, PROFESION, ESPECIALIDAD, NOMBRE_PLAN, CORREO, TIPO, PLANES, DOCUMENTOS } = raw
 
     if (!IDENTIFICACION || !AFILIADO || !PLANES || !Array.isArray(PLANES)) {
       await supabaseAdmin.from('webhook_logs').insert({
@@ -67,7 +71,20 @@ export async function POST(request: NextRequest) {
     // 5. Derivar wallet_address desde la cédula
     const walletAddress = getWalletAddress(IDENTIFICACION)
 
-    // 6. Upsert usuario
+    // 6. Mapear documentos (hasta 4)
+    const docs = DOCUMENTOS || []
+    const docFields: Record<string, string | null> = {
+      doc1_nombre: docs[0]?.NOMBRE || null,
+      doc1_filekey: docs[0]?.CONTENIDO || null,
+      doc2_nombre: docs[1]?.NOMBRE || null,
+      doc2_filekey: docs[1]?.CONTENIDO || null,
+      doc3_nombre: docs[2]?.NOMBRE || null,
+      doc3_filekey: docs[2]?.CONTENIDO || null,
+      doc4_nombre: docs[3]?.NOMBRE || null,
+      doc4_filekey: docs[3]?.CONTENIDO || null,
+    }
+
+    // 7. Upsert usuario
     const { error: userError } = await supabaseAdmin.from('usuarios').upsert(
       {
         identificacion: IDENTIFICACION,
@@ -79,6 +96,7 @@ export async function POST(request: NextRequest) {
         tipo: TIPO || null,
         wallet_address: walletAddress,
         wallet_creada: true,
+        ...docFields,
       },
       { onConflict: 'identificacion' }
     )

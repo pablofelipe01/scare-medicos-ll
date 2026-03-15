@@ -14,7 +14,7 @@ export async function GET(
     // Consultar usuario (sin exponer hashes ni tokens de reset)
     const { data: rawUsuario, error: userError } = await supabaseAdmin
       .from('usuarios')
-      .select('identificacion, afiliado, profesion, especialidad, nombre_plan, correo, tipo, wallet_address, wallet_creada, tokens_activados, fecha_creacion, fecha_activacion, avatar_url, codigo_hash')
+      .select('identificacion, afiliado, profesion, especialidad, nombre_plan, correo, tipo, wallet_address, wallet_creada, tokens_activados, fecha_creacion, fecha_activacion, avatar_url, codigo_hash, doc1_nombre, doc1_filekey, doc2_nombre, doc2_filekey, doc3_nombre, doc3_filekey, doc4_nombre, doc4_filekey')
       .eq('identificacion', cedula)
       .single()
 

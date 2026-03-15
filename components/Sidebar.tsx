@@ -5,7 +5,7 @@ import { Usuario, PlanToken } from '@/types'
 import { formatDate } from '@/lib/format'
 import { ChangePinModal } from './ChangePinModal'
 import { useToast } from '@/hooks/use-toast'
-import { FileText, ChevronDown, ChevronUp, Camera } from 'lucide-react'
+import { FileText, ChevronDown, ChevronUp, Camera, Loader2 } from 'lucide-react'
 
 interface SidebarProps {
   usuario: Usuario
@@ -18,6 +18,7 @@ export function Sidebar({ usuario, planes, totalPorUsar, onLogout }: SidebarProp
   const { toast } = useToast()
   const [changePinOpen, setChangePinOpen] = useState(false)
   const [docsOpen, setDocsOpen] = useState(false)
+  const [downloadingDoc, setDownloadingDoc] = useState<string | null>(null)
   const [avatarUrl, setAvatarUrl] = useState(usuario.avatar_url)
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -46,6 +47,36 @@ export function Sidebar({ usuario, planes, totalPorUsar, onLogout }: SidebarProp
     } finally {
       setUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  // Documentos del usuario
+  const documentos = [
+    { nombre: usuario.doc1_nombre, filekey: usuario.doc1_filekey },
+    { nombre: usuario.doc2_nombre, filekey: usuario.doc2_filekey },
+    { nombre: usuario.doc3_nombre, filekey: usuario.doc3_filekey },
+    { nombre: usuario.doc4_nombre, filekey: usuario.doc4_filekey },
+  ].filter((d) => d.nombre && d.filekey) as { nombre: string; filekey: string }[]
+
+  const handleDownloadDoc = async (filekey: string, nombre: string) => {
+    setDownloadingDoc(filekey)
+    try {
+      const res = await fetch(`/api/user/documento?filekey=${encodeURIComponent(filekey)}`)
+      if (!res.ok) {
+        toast({ title: 'Error', description: 'No se pudo descargar el documento', variant: 'destructive' })
+        return
+      }
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = nombre
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      toast({ title: 'Error', description: 'Error al descargar documento', variant: 'destructive' })
+    } finally {
+      setDownloadingDoc(null)
     }
   }
 
@@ -117,36 +148,36 @@ export function Sidebar({ usuario, planes, totalPorUsar, onLogout }: SidebarProp
       </div>
 
       {/* Documentos */}
-      <div className="mb-6">
-        <button
-          onClick={() => setDocsOpen(!docsOpen)}
-          className="flex items-center justify-between w-full text-sm font-medium text-[#1A1A2E] hover:text-[#6B5CE7] transition-colors"
-        >
-          <span>Documentos</span>
-          {docsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-        </button>
-        {docsOpen && (
-          <div className="mt-3 space-y-2">
-            {[
-              { label: 'Contrato de Mandato', url: '#' },
-              { label: 'Autorización Datos Personales FEVS', url: '#' },
-              { label: 'Solicitud de Integración AES Colectivo', url: '#' },
-              { label: 'Contrato de Tokenización', url: '#' },
-            ].map((doc) => (
-              <a
-                key={doc.label}
-                href={doc.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#F9F9F9] hover:bg-[#EDE9FF] text-xs text-[#666666] hover:text-[#6B5CE7] transition-colors"
-              >
-                <FileText className="h-3.5 w-3.5 flex-shrink-0" />
-                <span>{doc.label}</span>
-              </a>
-            ))}
-          </div>
-        )}
-      </div>
+      {documentos.length > 0 && (
+        <div className="mb-6">
+          <button
+            onClick={() => setDocsOpen(!docsOpen)}
+            className="flex items-center justify-between w-full text-sm font-medium text-[#1A1A2E] hover:text-[#6B5CE7] transition-colors"
+          >
+            <span>Documentos</span>
+            {docsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </button>
+          {docsOpen && (
+            <div className="mt-3 space-y-2">
+              {documentos.map((doc) => (
+                <button
+                  key={doc.filekey}
+                  onClick={() => handleDownloadDoc(doc.filekey, doc.nombre)}
+                  disabled={downloadingDoc === doc.filekey}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#F9F9F9] hover:bg-[#EDE9FF] text-xs text-[#666666] hover:text-[#6B5CE7] transition-colors w-full text-left"
+                >
+                  {downloadingDoc === doc.filekey ? (
+                    <Loader2 className="h-3.5 w-3.5 flex-shrink-0 animate-spin" />
+                  ) : (
+                    <FileText className="h-3.5 w-3.5 flex-shrink-0" />
+                  )}
+                  <span className="truncate">{doc.nombre}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <hr className="mb-6" />
 

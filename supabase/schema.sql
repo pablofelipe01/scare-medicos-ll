@@ -23,7 +23,15 @@ CREATE TABLE usuarios (
   pin_provisional_expira TIMESTAMP,
   reset_token_hash       TEXT,
   reset_token_expira     TIMESTAMP,
-  avatar_url        VARCHAR
+  avatar_url        VARCHAR,
+  doc1_nombre       VARCHAR,
+  doc1_filekey      VARCHAR,
+  doc2_nombre       VARCHAR,
+  doc2_filekey      VARCHAR,
+  doc3_nombre       VARCHAR,
+  doc3_filekey      VARCHAR,
+  doc4_nombre       VARCHAR,
+  doc4_filekey      VARCHAR
 );
 
 -- Enum para estado de tokens

@@ -15,6 +15,14 @@ export interface Usuario {
   fecha_activacion: string | null
   avatar_url: string | null
   codigo_configurado: boolean
+  doc1_nombre: string | null
+  doc1_filekey: string | null
+  doc2_nombre: string | null
+  doc2_filekey: string | null
+  doc3_nombre: string | null
+  doc3_filekey: string | null
+  doc4_nombre: string | null
+  doc4_filekey: string | null
 }
 
 export interface PlanToken {
