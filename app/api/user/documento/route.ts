@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     // Llamar al API de SCARE
     const scareRes = await fetch(
-      `https://apiintegracionsylicon.scare.org.co:9374/api/obtenerdocumento?keyfile=${encodeURIComponent(filekey)}`,
+      `https://apiintegracionsylicon.scare.org.co:9374/api/Documento?filekey=${encodeURIComponent(filekey)}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
