@@ -117,7 +117,7 @@ async function burnTokens(
     for (const tokenId of allTokenIds) {
       const balance: bigint = await readContract.balanceOf(u.wallet_address, tokenId)
 
-      if (balance > 0n) {
+      if (balance > BigInt(0)) {
         console.log(`  Quemando ${balance} tokens (ID: ${tokenId})...`)
         const tx = await userContract.burn(u.wallet_address, tokenId, balance)
         const receipt = await tx.wait()
