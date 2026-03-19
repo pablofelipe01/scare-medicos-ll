@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { getMinterContract } from '@/lib/contract'
 import { getSessionFromRequest, unauthorizedResponse } from '@/lib/auth'
+import { Resend } from 'resend'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +17,7 @@ export async function POST(request: NextRequest) {
     // 1. Consultar usuario → obtener wallet_address
     const { data: usuario, error: userError } = await supabaseAdmin
       .from('usuarios')
-      .select('wallet_address')
+      .select('wallet_address, correo, afiliado')
       .eq('identificacion', identificacion)
       .single()
 
@@ -113,6 +116,28 @@ export async function POST(request: NextRequest) {
         fecha_activacion: new Date().toISOString(),
       })
       .eq('identificacion', identificacion)
+
+    // 7. Enviar correo de confirmación
+    if (usuario.correo) {
+      await resend.emails.send({
+        from: 'TokBox <no-reply@sylicon.tech>',
+        to: usuario.correo,
+        subject: 'BIENVENIDO(A) AL FEVS!',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
+            <h2 style="color: #1A1A2E; margin-bottom: 16px;">Bienvenido al FEVS (Fideicomiso Econ&oacute;mico Voluntario Solidario) y a la plataforma TOKBOX</h2>
+            <p style="color: #666666; font-size: 14px; line-height: 1.6;">
+              A partir de este momento puede ingresar su n&uacute;mero de documento y su c&oacute;digo de 6 d&iacute;gitos creado, y visualizar la representaci&oacute;n digital de su apoyo econ&oacute;mico disponible.
+            </p>
+            <p style="color: #666666; font-size: 14px; line-height: 1.6;">
+              En caso de olvidar su c&oacute;digo de 6 d&iacute;gitos, de clic <a href="https://sylicon.tech" style="color: #6B5CE7; text-decoration: underline;">aqu&iacute;</a>.
+            </p>
+          </div>
+        `,
+      }).catch((err) => {
+        console.error('Error enviando correo de activación:', err)
+      })
+    }
 
     return NextResponse.json({
       success: true,
