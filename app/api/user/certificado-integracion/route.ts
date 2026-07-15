@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 import { getSessionFromRequest, unauthorizedResponse } from '@/lib/auth'
 
-// Base URL de la API Sylicon (Certificados).
-// Nota: el host de la especificación (apiintsylicon.scare.org.co) no resuelve en DNS.
-// Usamos el host de integración que sí responde (el mismo de documentos), en el puerto 9372.
-const SYLICON_BASE_URL = 'https://apiintegracionsylicon.scare.org.co:9372'
+// Base URL de la API Sylicon (Certificados). Configurable por env var porque SCARE
+// debe confirmar el host/puerto correcto: el de la especificación
+// (apiintsylicon.scare.org.co) no resuelve en DNS y el puerto :9372 del host de
+// integración hace timeout. Cuando SCARE confirme, se ajusta SCARE_CERT_BASE_URL en Vercel.
+const SYLICON_BASE_URL =
+  process.env.SCARE_CERT_BASE_URL || 'https://apiintsylicon.scare.org.co:9372'
 
 export async function GET(request: NextRequest) {
   try {
@@ -42,17 +44,10 @@ export async function GET(request: NextRequest) {
         }
       )
     } catch (fetchErr) {
-      // DIAGNÓSTICO TEMPORAL: exponer la causa real del fallo de conexión a SCARE.
       const cause = (fetchErr as { cause?: { code?: string } }).cause
+      console.error('SCARE certificadointegracion connection error:', cause?.code, SYLICON_BASE_URL)
       return NextResponse.json(
-        {
-          error: 'No se pudo conectar con SCARE',
-          _diag: {
-            url: SYLICON_BASE_URL,
-            code: cause?.code || null,
-            message: (fetchErr as Error).message,
-          },
-        },
+        { error: 'No se pudo conectar con el servicio de certificados' },
         { status: 502 }
       )
     }
