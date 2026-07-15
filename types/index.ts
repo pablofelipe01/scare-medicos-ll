@@ -45,3 +45,45 @@ export interface DashboardData {
   totalReservados: number
   totalUtilizados: number
 }
+
+// ── Portal administrativo ──
+
+export interface AdminUserListItem {
+  identificacion: string
+  afiliado: string
+  correo: string | null
+  tipo: string | null
+  nombre_plan: string | null
+  wallet_address: string | null
+  wallet_creada: boolean
+  tokens_activados: boolean
+  certificado_descargado: string | null
+  fecha_creacion: string
+  planCodes: string[]
+  tokensDisponibles: number
+  tokensReservados: number
+  tokensUtilizados: number
+}
+
+export interface AdminUsersResponse {
+  users: AdminUserListItem[]
+  total: number
+  page: number
+  pageSize: number
+}
+
+export interface AdminUserDetail extends Usuario {
+  certificado_descargado: string | null
+  planes: PlanToken[]
+}
+
+// Campos que el administrador puede editar (el resto es solo lectura)
+export interface AdminEditableFields {
+  identificacion?: string
+  afiliado?: string
+  correo?: string | null
+  profesion?: string | null
+  especialidad?: string | null
+  tipo?: string | null
+  nombre_plan?: string | null
+}
