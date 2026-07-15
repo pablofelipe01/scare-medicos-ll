@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 import { getSessionFromRequest, unauthorizedResponse } from '@/lib/auth'
 
-// Base URL de la API Sylicon (Certificados) — instancia distinta a la de documentos.
-const SYLICON_BASE_URL = 'https://apiintsylicon.scare.org.co:9372'
+// Base URL de la API Sylicon (Certificados).
+// Nota: el host de la especificación (apiintsylicon.scare.org.co) no resuelve en DNS.
+// Usamos el host de integración que sí responde (el mismo de documentos), en el puerto 9372.
+const SYLICON_BASE_URL = 'https://apiintegracionsylicon.scare.org.co:9372'
 
 export async function GET(request: NextRequest) {
   try {
