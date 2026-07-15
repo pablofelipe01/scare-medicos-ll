@@ -30,15 +30,32 @@ export async function GET(request: NextRequest) {
       expiresIn: '1h',
     })
 
-    const scareRes = await fetch(
-      `${SYLICON_BASE_URL}/api/certificadointegracion?cedula=${encodeURIComponent(cedula)}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/json',
+    let scareRes: Response
+    try {
+      scareRes = await fetch(
+        `${SYLICON_BASE_URL}/api/certificadointegracion?cedula=${encodeURIComponent(cedula)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+          },
+        }
+      )
+    } catch (fetchErr) {
+      // DIAGNÓSTICO TEMPORAL: exponer la causa real del fallo de conexión a SCARE.
+      const cause = (fetchErr as { cause?: { code?: string } }).cause
+      return NextResponse.json(
+        {
+          error: 'No se pudo conectar con SCARE',
+          _diag: {
+            url: SYLICON_BASE_URL,
+            code: cause?.code || null,
+            message: (fetchErr as Error).message,
+          },
         },
-      }
-    )
+        { status: 502 }
+      )
+    }
 
     if (!scareRes.ok) {
       console.error('SCARE certificadointegracion error:', scareRes.status)
