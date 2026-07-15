@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 import { getSessionFromRequest, unauthorizedResponse } from '@/lib/auth'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
 // Base URL de la API Sylicon (Certificados). Configurable por env var porque SCARE
 // debe confirmar el host/puerto correcto: el de la especificación
@@ -67,6 +68,12 @@ export async function GET(request: NextRequest) {
         { status: 404 }
       )
     }
+
+    // Registrar la descarga del certificado (visible en el portal administrativo)
+    await supabaseAdmin
+      .from('usuarios')
+      .update({ certificado_descargado: new Date().toISOString() })
+      .eq('identificacion', cedula)
 
     return NextResponse.json(data, {
       headers: { 'Cache-Control': 'no-store' },

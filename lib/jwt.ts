@@ -30,3 +30,24 @@ export function verifySessionJWT(token: string): { cedula: string } | null {
     return null
   }
 }
+
+// ── Admin session JWT ──
+
+export function signAdminJWT(username: string): string {
+  return jwt.sign({ username, role: 'admin' }, process.env.SESSION_JWT_SECRET!, {
+    algorithm: 'HS256',
+    expiresIn: '8h',
+  })
+}
+
+export function verifyAdminJWT(token: string): { username: string } | null {
+  try {
+    const payload = jwt.verify(token, process.env.SESSION_JWT_SECRET!, {
+      algorithms: ['HS256'],
+    }) as { username: string; role?: string }
+    if (payload.role !== 'admin') return null
+    return { username: payload.username }
+  } catch {
+    return null
+  }
+}

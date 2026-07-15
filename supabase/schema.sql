@@ -24,6 +24,7 @@ CREATE TABLE usuarios (
   reset_token_hash       TEXT,
   reset_token_expira     TIMESTAMP,
   avatar_url        VARCHAR,
+  certificado_descargado TIMESTAMP,
   doc1_nombre       VARCHAR,
   doc1_filekey      VARCHAR,
   doc2_nombre       VARCHAR,
@@ -41,7 +42,7 @@ CREATE TYPE estado_token AS ENUM
 -- Tabla de planes y tokens vinculados a cada usuario
 CREATE TABLE planes_tokens (
   id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  identificacion    VARCHAR REFERENCES usuarios(identificacion),
+  identificacion    VARCHAR REFERENCES usuarios(identificacion) ON UPDATE CASCADE,
   codigo_plan       VARCHAR NOT NULL,
   tokens            INTEGER NOT NULL,
   estado            estado_token NOT NULL DEFAULT 'DISPONIBLES',
