@@ -6,6 +6,12 @@ import { ProgressBar } from './ProgressBar'
 import { TokenChart } from './TokenChart'
 import { AcelerarModal } from './AcelerarModal'
 import { useState } from 'react'
+import { Download, Loader2 } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
+import {
+  generateIntegrationCertificate,
+  type CertificadoIntegracion,
+} from '@/lib/generate-integration-certificate'
 
 interface PlanTabsProps {
   planes: PlanToken[]
@@ -13,9 +19,38 @@ interface PlanTabsProps {
 }
 
 export function PlanTabs({ planes, usuario }: PlanTabsProps) {
+  const { toast } = useToast()
+  const [descargando, setDescargando] = useState(false)
+
   // Obtener códigos de plan únicos, ordenados por fecha_vinculacion
   const planCodes = Array.from(new Set(planes.map((p) => p.codigo_plan)))
   const [activeTab, setActiveTab] = useState(planCodes[0] || '')
+
+  const handleDescargarCertificado = async () => {
+    setDescargando(true)
+    try {
+      const res = await fetch('/api/user/certificado-integracion')
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        toast({
+          title: 'No se pudo generar el certificado',
+          description: body.error || 'Intenta de nuevo más tarde.',
+          variant: 'destructive',
+        })
+        return
+      }
+      const data = (await res.json()) as CertificadoIntegracion
+      await generateIntegrationCertificate(data)
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Ocurrió un error al generar el certificado.',
+        variant: 'destructive',
+      })
+    } finally {
+      setDescargando(false)
+    }
+  }
 
   // Filtrar planes del tab activo
   const activePlanes = planes.filter((p) => p.codigo_plan === activeTab)
@@ -79,22 +114,19 @@ export function PlanTabs({ planes, usuario }: PlanTabsProps) {
         />
       </div>
 
-      {/* Descargar Certificado - comentado hasta tener info final */}
-      {/* <button
-        onClick={() =>
-          generateCertificate({
-            usuario,
-            codigoPlan: activeTab,
-            disponibles,
-            reservados,
-            utilizados,
-          })
-        }
-        className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm text-[#666666] hover:bg-gray-50 transition-colors"
+      {/* Descargar Certificado de Integración FEVS */}
+      <button
+        onClick={handleDescargarCertificado}
+        disabled={descargando}
+        className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm text-[#666666] hover:bg-gray-50 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        <Download className="h-4 w-4" />
-        Descargar Certificado
-      </button> */}
+        {descargando ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <Download className="h-4 w-4" />
+        )}
+        {descargando ? 'Generando…' : 'Descargar Certificado de Integración'}
+      </button>
 
       {/* Chart */}
       {usuario.tipo !== 'ANTIGUO' && (
