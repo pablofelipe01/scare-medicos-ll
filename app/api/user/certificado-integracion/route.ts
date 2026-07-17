@@ -50,10 +50,15 @@ export async function GET(request: NextRequest) {
         }
       )
     } catch (fetchErr) {
-      const cause = (fetchErr as { cause?: { code?: string } }).cause
+      const err = fetchErr as { message?: string; cause?: { code?: string; message?: string } }
+      const cause = err.cause
       console.error('SCARE certificadointegracion connection error:', cause?.code, SYLICON_BASE_URL)
       return NextResponse.json(
-        { error: 'No se pudo conectar con el servicio de certificados' },
+        {
+          error: 'No se pudo conectar con el servicio de certificados',
+          // DIAGNÓSTICO TEMPORAL — quitar tras identificar la causa
+          _debug: { code: cause?.code, causeMsg: cause?.message, msg: err.message },
+        },
         { status: 502 }
       )
     }
