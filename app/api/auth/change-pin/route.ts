@@ -3,6 +3,8 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 import { verifyValue, hashValue } from '@/lib/access-code'
 import { getSessionFromRequest, unauthorizedResponse } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
   try {
     const session = getSessionFromRequest(request)

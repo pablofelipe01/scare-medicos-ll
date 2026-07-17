@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken'
 import { getSessionFromRequest, unauthorizedResponse } from '@/lib/auth'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 
+export const dynamic = 'force-dynamic'
+
 // Base URL de la API Sylicon (Certificados). Configurable por env var.
 // SCARE publicó el DNS de pruebas el 2026-07-17: apiintsyliconpruebas.scare.org.co
 // (resuelve a 200.93.163.210) en el puerto :9389. Swagger en /swagger/index.html.
