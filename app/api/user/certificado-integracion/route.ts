@@ -44,6 +44,9 @@ export async function GET(request: NextRequest) {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
           },
+          // No cachear: el certificado debe consultarse en vivo cada vez. Sin esto,
+          // Next.js sirve respuestas cacheadas (p. ej. un 404 viejo) desde el Data Cache.
+          cache: 'no-store',
         }
       )
     } catch (fetchErr) {
@@ -55,10 +58,19 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // La API de SCARE responde 404 cuando no hay certificado para esa cédula
+    // (la conexión funcionó; simplemente no existe par en SCARE). Se traduce a un
+    // 404 con mensaje claro para el usuario, en vez del error genérico.
+    if (scareRes.status === 404) {
+      return NextResponse.json(
+        { error: 'No se encontró certificado de integración para esta identificación' },
+        { status: 404 }
+      )
+    }
+
     if (!scareRes.ok) {
       console.error('SCARE certificadointegracion error:', scareRes.status)
-      const status = scareRes.status === 401 ? 502 : 502
-      return NextResponse.json({ error: 'Error al obtener el certificado' }, { status })
+      return NextResponse.json({ error: 'Error al obtener el certificado' }, { status: 502 })
     }
 
     const data = await scareRes.json()
