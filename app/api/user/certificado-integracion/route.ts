@@ -3,12 +3,12 @@ import jwt from 'jsonwebtoken'
 import { getSessionFromRequest, unauthorizedResponse } from '@/lib/auth'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 
-// Base URL de la API Sylicon (Certificados). Configurable por env var porque SCARE
-// debe confirmar el host/puerto correcto: el de la especificación
-// (apiintsylicon.scare.org.co) no resuelve en DNS y el puerto :9372 del host de
-// integración hace timeout. Cuando SCARE confirme, se ajusta SCARE_CERT_BASE_URL en Vercel.
+// Base URL de la API Sylicon (Certificados). Configurable por env var.
+// SCARE publicó el DNS de pruebas el 2026-07-17: apiintsyliconpruebas.scare.org.co
+// (resuelve a 200.93.163.210) en el puerto :9389. Swagger en /swagger/index.html.
+// Se puede sobreescribir con SCARE_CERT_BASE_URL en Vercel.
 const SYLICON_BASE_URL =
-  process.env.SCARE_CERT_BASE_URL || 'https://apiintsylicon.scare.org.co:9372'
+  process.env.SCARE_CERT_BASE_URL || 'https://apiintsyliconpruebas.scare.org.co:9389'
 
 export async function GET(request: NextRequest) {
   try {
