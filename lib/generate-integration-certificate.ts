@@ -17,12 +17,15 @@ const MESES = [
 ]
 
 function formatFechaLarga(dateStr: string): string {
+  // Sin fecha (SCARE puede devolver null): línea en blanco para no imprimir "1970".
+  if (!dateStr) return '________________'
   const d = new Date(dateStr)
   if (isNaN(d.getTime())) return dateStr
   return `${d.getDate()} de ${MESES[d.getMonth()]} de ${d.getFullYear()}`
 }
 
 function partesFecha(dateStr: string): { dia: string; mes: string; anio: string } {
+  if (!dateStr) return { dia: '____', mes: '____', anio: '____' }
   const d = new Date(dateStr)
   if (isNaN(d.getTime())) return { dia: '—', mes: '—', anio: '—' }
   return { dia: String(d.getDate()), mes: MESES[d.getMonth()], anio: String(d.getFullYear()) }

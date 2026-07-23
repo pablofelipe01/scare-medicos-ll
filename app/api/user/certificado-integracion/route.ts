@@ -63,16 +63,6 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // La API de SCARE responde 404 cuando no hay certificado para esa cédula
-    // (la conexión funcionó; simplemente no existe par en SCARE). Se traduce a un
-    // 404 con mensaje claro para el usuario, en vez del error genérico.
-    if (scareRes.status === 404) {
-      return NextResponse.json(
-        { error: 'No se encontró certificado de integración para esta identificación' },
-        { status: 404 }
-      )
-    }
-
     if (!scareRes.ok) {
       console.error('SCARE certificadointegracion error:', scareRes.status)
       return NextResponse.json({ error: 'Error al obtener el certificado' }, { status: 502 })
@@ -80,12 +70,26 @@ export async function GET(request: NextRequest) {
 
     const data = await scareRes.json()
 
-    // La API devuelve null (o cuerpo vacío) cuando no existe certificado para la cédula.
-    if (!data || !data.AFILIADO) {
+    // La API de SCARE responde SIEMPRE 200; cuando no hay integrado para la cédula
+    // devuelve el objeto con `afiliado: null`. Los nombres de campo llegan en
+    // minúscula/mixto (afiliado, fechA_CERTIFICADO, …) — se aceptan ambas grafías.
+    const afiliado = data?.afiliado ?? data?.AFILIADO
+    if (!data || !afiliado) {
       return NextResponse.json(
         { error: 'No se encontró certificado de integración para esta identificación' },
         { status: 404 }
       )
+    }
+
+    // Normalizar al formato que espera el generador del PDF (CertificadoIntegracion).
+    const certificado = {
+      AFILIADO: afiliado,
+      IDENTIFICACION: data.identificacion ?? data.IDENTIFICACION ?? cedula,
+      ESPECIALIDADES: data.especialidades ?? data.ESPECIALIDADES ?? '',
+      FECHA_INTEGRACION: data.fechA_INTEGRACION ?? data.FECHA_INTEGRACION ?? '',
+      FECHA_CERTIFICADO: data.fechA_CERTIFICADO ?? data.FECHA_CERTIFICADO ?? '',
+      FIRMA: data.firma ?? data.FIRMA ?? '',
+      CARGO: data.cargo ?? data.CARGO ?? '',
     }
 
     // Registrar la descarga del certificado (visible en el portal administrativo)
@@ -94,7 +98,7 @@ export async function GET(request: NextRequest) {
       .update({ certificado_descargado: new Date().toISOString() })
       .eq('identificacion', cedula)
 
-    return NextResponse.json(data, {
+    return NextResponse.json(certificado, {
       headers: { 'Cache-Control': 'no-store' },
     })
   } catch (error) {
