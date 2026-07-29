@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'TokBox — Aportes On-Chain',
-  description: 'Plataforma de tokenización médica on-chain',
+  description: 'Plataforma de aportes médicos on-chain',
 }
 
 export default function RootLayout({
