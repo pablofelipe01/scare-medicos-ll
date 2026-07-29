@@ -70,7 +70,7 @@ export function TokenChart({ planes }: TokenChartProps) {
               borderRadius: '8px',
               fontSize: '14px',
             }}
-            formatter={(value: number) => [value.toLocaleString(), 'Tokens']}
+            formatter={(value: number) => [value.toLocaleString(), 'Aportes']}
           />
           <Bar dataKey="tokens" fill="#6B5CE7" radius={[4, 4, 0, 0]} />
         </BarChart>

@@ -183,14 +183,14 @@ export function Sidebar({ usuario, planes, totalPorUsar, onLogout }: SidebarProp
 
       {/* Tokens por Usar */}
       <div className="bg-[#F9F9F9] rounded-xl p-4 mb-4">
-        <p className="text-xs text-[#666666] uppercase tracking-wider mb-1">Tokens por Usar</p>
+        <p className="text-xs text-[#666666] uppercase tracking-wider mb-1">Aportes por Usar</p>
         <p className="text-3xl font-bold text-[#1A1A2E]">{totalPorUsar.toLocaleString()}</p>
       </div>
 
       {usuario.tipo !== 'ANTIGUO' && (
         <div className="space-y-1 text-sm text-[#666666] mb-6">
-          <p>Próximo token: <span className="font-medium">Por definir</span></p>
-          <p>Último token: <span className="font-medium">{formatDate(lastVinculacion || null)}</span></p>
+          <p>Próximo aporte: <span className="font-medium">Por definir</span></p>
+          <p>Último aporte: <span className="font-medium">{formatDate(lastVinculacion || null)}</span></p>
         </div>
       )}
 

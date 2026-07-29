@@ -175,6 +175,14 @@ export async function generateIntegrationCertificate(data: CertificadoIntegracio
   doc.setTextColor(90, 90, 90)
   doc.text(data.CARGO || '', marginX, y)
 
+  // Código del Sistema de Gestión de Calidad (SGC) al pie del documento,
+  // centrado sobre la banda del membrete.
+  const SGC_CODE = 'ARG-ANI-FO-002/V0/01-08-2026'
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(120, 120, 120)
+  doc.text(SGC_CODE, pageW / 2, pageH - 12, { align: 'center' })
+
   const fileName = `Certificado_Integracion_${String(data.IDENTIFICACION).replace(/\D/g, '')}.pdf`
   doc.save(fileName)
 }

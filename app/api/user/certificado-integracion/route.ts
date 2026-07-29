@@ -9,10 +9,12 @@ export const dynamic = 'force-dynamic'
 // SCARE publicó el DNS de pruebas el 2026-07-17: apiintsyliconpruebas.scare.org.co
 // (resuelve a 200.93.163.210) en el puerto :9389. Swagger en /swagger/index.html.
 // Se puede sobreescribir con SCARE_CERT_BASE_URL en Vercel.
+// URL de PRODUCCIÓN de SCARE (confirmada 2026-07-29). Mismo host/puerto que el
+// endpoint de documentos. Endpoint: /api/certificadointegracion?cedula={int}.
 // .trim() + quitar '/' final: la env var en Vercel puede traer espacios o barra
 // sobrante que romperían la URL construida (ERR_INVALID_URL).
 const SYLICON_BASE_URL = (
-  process.env.SCARE_CERT_BASE_URL || 'https://apiintsyliconpruebas.scare.org.co:9389'
+  process.env.SCARE_CERT_BASE_URL || 'https://apiintegracionsylicon.scare.org.co:9374'
 )
   .trim()
   .replace(/\/+$/, '')

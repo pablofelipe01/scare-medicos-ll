@@ -27,8 +27,8 @@ export function ActivateTokensModal({
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
           <DialogTitle className="text-center">
-            {status === 'loading' && 'Activando Tokens'}
-            {status === 'success' && 'Tokens Activados'}
+            {status === 'loading' && 'Activando Aportes'}
+            {status === 'success' && 'Aportes Activados'}
             {status === 'error' && 'Error'}
           </DialogTitle>
         </DialogHeader>
@@ -38,7 +38,7 @@ export function ActivateTokensModal({
             <>
               <Loader2 className="h-12 w-12 animate-spin text-[#6B5CE7]" />
               <p className="text-sm text-[#666666] text-center">
-                Acreditando tus tokens SMT en Polygon...
+                Acreditando tus aportes SMT en Polygon...
                 <br />
                 esto puede tomar unos segundos
               </p>
@@ -54,7 +54,7 @@ export function ActivateTokensModal({
                 </p>
               )}
               <p className="text-sm text-green-600 font-medium">
-                Tokens acreditados exitosamente
+                Aportes acreditados exitosamente
               </p>
             </>
           )}
@@ -63,7 +63,7 @@ export function ActivateTokensModal({
             <>
               <XCircle className="h-12 w-12 text-red-500" />
               <p className="text-sm text-red-600">
-                Error al activar tokens. Intenta nuevamente.
+                Error al activar aportes. Intenta nuevamente.
               </p>
             </>
           )}
