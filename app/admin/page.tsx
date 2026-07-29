@@ -123,7 +123,7 @@ export default function AdminPage() {
                   <th className="py-3 px-4 font-medium">Correo</th>
                   <th className="py-3 px-4 font-medium">Tipo</th>
                   <th className="py-3 px-4 font-medium">Planes</th>
-                  <th className="py-3 px-4 font-medium">Tokens (D/R/U)</th>
+                  <th className="py-3 px-4 font-medium">Aportes (D/R/U)</th>
                   <th className="py-3 px-4 font-medium">Billetera</th>
                   <th className="py-3 px-4 font-medium text-center">Cert.</th>
                 </tr>

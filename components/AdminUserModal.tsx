@@ -223,10 +223,10 @@ export function AdminUserModal({ cedula, open, onClose, onSaved }: Props) {
                     'No asignada'
                   )}
                 </Field>
-                <Field label="Estado billetera / tokens">
+                <Field label="Estado billetera / aportes">
                   <span className="flex gap-2">
                     <Badge ok={detail.wallet_creada} yes="Billetera creada" no="Sin billetera" />
-                    <Badge ok={detail.tokens_activados} yes="Tokens activados" no="Sin activar" />
+                    <Badge ok={detail.tokens_activados} yes="Aportes activados" no="Sin activar" />
                   </span>
                 </Field>
                 <Field label="Certificado descargado">
@@ -256,7 +256,7 @@ export function AdminUserModal({ cedula, open, onClose, onSaved }: Props) {
                       <tr className="text-left text-[#888] border-b border-gray-200">
                         <th className="py-2 pr-3">Plan</th>
                         <th className="py-2 pr-3">Estado</th>
-                        <th className="py-2 pr-3">Tokens</th>
+                        <th className="py-2 pr-3">Aportes</th>
                         <th className="py-2 pr-3">Vinculación</th>
                         <th className="py-2 pr-3">Tx Mint</th>
                       </tr>

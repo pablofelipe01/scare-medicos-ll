@@ -6,7 +6,7 @@ import { Toaster } from '@/components/ui/toaster'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'TokBox — Tokens On-Chain',
+  title: 'TokBox — Aportes On-Chain',
   description: 'Plataforma de tokenización médica on-chain',
 }
 
