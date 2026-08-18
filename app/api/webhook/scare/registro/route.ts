@@ -1,36 +1,66 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyScareJWT } from '@/lib/jwt'
+import { verifyScareJWTDetallado } from '@/lib/jwt'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { getWalletAddress } from '@/lib/wallet'
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
   let payload: Record<string, unknown> = {}
 
-  try {
-    // 1. Verificar JWT HS256
-    const authHeader = request.headers.get('authorization')
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const token = authHeader.split(' ')[1]
-    if (!verifyScareJWT(token)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // 2. Parsear body
-    payload = await request.json()
-
-    // 3. Registrar en webhook_logs
-    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
-    await supabaseAdmin.from('webhook_logs').insert({
+  const registrarEnLog = (status: string, error_message?: string) =>
+    supabaseAdmin.from('webhook_logs').insert({
       evento: 'REGISTRO',
       payload_raw: payload,
-      status: 'PROCESSING',
+      status,
+      error_message: error_message || null,
       ip_origen: ip,
     })
 
-    // 4. Validar campos requeridos (SCARE puede enviar números en vez de strings)
+  try {
+    // 1. Leer el body ANTES de validar nada. El log de llegada tiene que ser lo
+    //    primero: si rechazamos la llamada por autenticación, este es el único
+    //    rastro de que SCARE nos llamó.
+    const bodyText = await request.text()
+    let errorDeParseo: string | null = null
+    try {
+      payload = bodyText ? JSON.parse(bodyText) : {}
+    } catch {
+      errorDeParseo = 'El body no es JSON válido'
+      payload = { _body_no_parseable: bodyText.slice(0, 2000) }
+    }
+
+    // 2. Registrar la llegada
+    await registrarEnLog('PROCESSING')
+
+    // 3. Verificar JWT HS256 — todo rechazo queda auditado como UNAUTHORIZED
+    const authHeader = request.headers.get('authorization')
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      await registrarEnLog(
+        'UNAUTHORIZED',
+        authHeader
+          ? 'El header Authorization no usa el esquema Bearer'
+          : 'Falta el header Authorization'
+      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const token = authHeader.slice('Bearer '.length).trim()
+    const verificacion = verifyScareJWTDetallado(token)
+    if (!verificacion.valido) {
+      await registrarEnLog('UNAUTHORIZED', verificacion.motivo)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // 4. Ya autenticados, recién ahora reportamos un body ilegible
+    if (errorDeParseo) {
+      await registrarEnLog('ERROR', errorDeParseo)
+      return NextResponse.json(
+        { error: 'Bad Request', detail: errorDeParseo },
+        { status: 400 }
+      )
+    }
+
+    // 5. Validar campos requeridos (SCARE puede enviar números en vez de strings)
     const raw = payload as {
       IDENTIFICACION: string | number
       AFILIADO: string
@@ -55,23 +85,17 @@ export async function POST(request: NextRequest) {
     const { AFILIADO, PROFESION, ESPECIALIDAD, NOMBRE_PLAN, CORREO, TIPO, PLANES, DOCUMENTOS } = raw
 
     if (!IDENTIFICACION || !AFILIADO || !PLANES || !Array.isArray(PLANES)) {
-      await supabaseAdmin.from('webhook_logs').insert({
-        evento: 'REGISTRO',
-        payload_raw: payload,
-        status: 'ERROR',
-        error_message: 'Missing required fields: IDENTIFICACION, AFILIADO, PLANES',
-        ip_origen: ip,
-      })
+      await registrarEnLog('ERROR', 'Missing required fields: IDENTIFICACION, AFILIADO, PLANES')
       return NextResponse.json(
         { error: 'Bad Request', detail: 'Missing required fields: IDENTIFICACION, AFILIADO, PLANES' },
         { status: 400 }
       )
     }
 
-    // 5. Derivar wallet_address desde la cédula
+    // 6. Derivar wallet_address desde la cédula
     const walletAddress = getWalletAddress(IDENTIFICACION)
 
-    // 6. Mapear documentos (hasta 4)
+    // 7. Mapear documentos (hasta 4)
     const docs = DOCUMENTOS || []
     const docFields: Record<string, string | null> = {
       doc1_nombre: docs[0]?.NOMBRE || null,
@@ -84,7 +108,7 @@ export async function POST(request: NextRequest) {
       doc4_filekey: docs[3]?.CONTENIDO || null,
     }
 
-    // 7. Upsert usuario
+    // 8. Upsert usuario
     const { error: userError } = await supabaseAdmin.from('usuarios').upsert(
       {
         identificacion: IDENTIFICACION,
@@ -103,20 +127,14 @@ export async function POST(request: NextRequest) {
 
     if (userError) {
       console.error('Error upserting usuario:', userError)
-      await supabaseAdmin.from('webhook_logs').insert({
-        evento: 'REGISTRO',
-        payload_raw: payload,
-        status: 'ERROR',
-        error_message: `DB error: ${userError.message}`,
-        ip_origen: ip,
-      })
+      await registrarEnLog('ERROR', `DB error: ${userError.message}`)
       return NextResponse.json(
         { error: 'Internal Server Error', detail: userError.message },
         { status: 500 }
       )
     }
 
-    // 7. Insert de cada PLAN en planes_tokens
+    // 9. Insert de cada PLAN en planes_tokens
     for (const plan of PLANES) {
       const { error: planError } = await supabaseAdmin.from('planes_tokens').insert({
         identificacion: String(plan.IDENTIFICACION || IDENTIFICACION),
@@ -131,25 +149,15 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 8. Log de éxito
-    await supabaseAdmin.from('webhook_logs').insert({
-      evento: 'REGISTRO',
-      payload_raw: payload,
-      status: 'SUCCESS',
-      ip_origen: ip,
-    })
+    // 10. Log de éxito
+    await registrarEnLog('SUCCESS')
 
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Webhook registro error:', error)
 
     try {
-      await supabaseAdmin.from('webhook_logs').insert({
-        evento: 'REGISTRO',
-        payload_raw: payload,
-        status: 'ERROR',
-        error_message: error instanceof Error ? error.message : 'Unknown error',
-      })
+      await registrarEnLog('ERROR', error instanceof Error ? error.message : 'Unknown error')
     } catch (logError) {
       console.error('Error logging webhook failure:', logError)
     }

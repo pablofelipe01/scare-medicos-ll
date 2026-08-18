@@ -1,13 +1,28 @@
 import jwt from 'jsonwebtoken'
 
 export function verifyScareJWT(token: string): boolean {
+  return verifyScareJWTDetallado(token).valido
+}
+
+// Igual que verifyScareJWT, pero devuelve el motivo del rechazo para poder
+// registrarlo en webhook_logs. Nunca expone el token ni el secreto.
+export function verifyScareJWTDetallado(
+  token: string
+): { valido: true } | { valido: false; motivo: string } {
   try {
     jwt.verify(token, process.env.SCARE_JWT_SECRET!, {
       algorithms: ['HS256'],
     })
-    return true
-  } catch {
-    return false
+    return { valido: true }
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      return { valido: false, motivo: `Token expirado el ${error.expiredAt.toISOString()}` }
+    }
+    if (error instanceof jwt.JsonWebTokenError) {
+      // Cubre firma inválida, algoritmo distinto a HS256 y token malformado
+      return { valido: false, motivo: `Token inválido: ${error.message}` }
+    }
+    return { valido: false, motivo: 'Error desconocido al verificar el token' }
   }
 }
 
