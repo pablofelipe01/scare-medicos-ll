@@ -37,3 +37,7 @@ next-env.d.ts
 
 # docs
 FEATURES.md
+
+# documentos internos (repo público)
+*.docx
+Firma Dra Veronica.png
