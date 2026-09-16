@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 import { getMinterContract } from '@/lib/contract'
 import { getSessionFromRequest, unauthorizedResponse } from '@/lib/auth'
 import { Resend } from 'resend'
+import { MAIL_FROM } from '@/lib/mail'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -122,7 +123,7 @@ export async function POST(request: NextRequest) {
     // 7. Enviar correo de confirmación
     if (usuario.correo) {
       await resend.emails.send({
-        from: 'TokBox <no-reply@sylicon.tech>',
+        from: MAIL_FROM,
         to: usuario.correo,
         subject: 'BIENVENIDO(A) AL FEVS!',
         html: `

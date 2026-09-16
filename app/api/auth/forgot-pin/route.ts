@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 import { hashValue } from '@/lib/access-code'
 import crypto from 'crypto'
 import { Resend } from 'resend'
+import { MAIL_FROM } from '@/lib/mail'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     // Enviar correo
     const { error: emailError } = await resend.emails.send({
-      from: 'TokBox <no-reply@sylicon.tech>',
+      from: MAIL_FROM,
       to: usuario.correo,
       subject: 'Tu PIN provisional — TokBox',
       html: `

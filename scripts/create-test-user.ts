@@ -16,12 +16,12 @@ function getWalletAddress(cedula: string): string {
 }
 
 async function main() {
-  const ID = '123456'
+  const ID = '654321'
   const wallet = getWalletAddress(ID)
 
   const { error: userError } = await supabase.from('usuarios').upsert({
     identificacion: ID,
-    afiliado: 'Pablo Acebedo',
+    afiliado: 'Felipe Cuellar',
     profesion: 'Médico',
     especialidad: 'Medicina General',
     nombre_plan: 'Plan Integral',
