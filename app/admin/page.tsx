@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { AdminUserModal } from '@/components/AdminUserModal'
-import { Loader2, Search, LogOut, ChevronLeft, ChevronRight, ShieldCheck, CheckCircle2 } from 'lucide-react'
+import { Loader2, Search, LogOut, ChevronLeft, ChevronRight, ShieldCheck, CheckCircle2, Download } from 'lucide-react'
 import type { AdminUsersResponse, AdminUserListItem } from '@/types'
 
 function shortWallet(a: string | null): string {
@@ -21,6 +21,7 @@ export default function AdminPage() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [selected, setSelected] = useState<string | null>(null)
+  const [exporting, setExporting] = useState(false)
 
   const fetchUsers = useCallback(async (p: number, q: string) => {
     setLoading(true)
@@ -69,6 +70,30 @@ export default function AdminPage() {
     router.push('/admin/login')
   }
 
+  // Descarga todos los usuarios (respetando la búsqueda actual) en .txt
+  const handleExport = async () => {
+    setExporting(true)
+    try {
+      const res = await fetch(`/api/admin/users?format=txt&search=${encodeURIComponent(search)}`)
+      if (res.status === 401) {
+        router.push('/admin/login')
+        return
+      }
+      if (!res.ok) return
+      const blob = await res.blob()
+      const disposition = res.headers.get('Content-Disposition') || ''
+      const filename = disposition.match(/filename="([^"]+)"/)?.[1] || 'usuarios.txt'
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      a.click()
+      URL.revokeObjectURL(url)
+    } finally {
+      setExporting(false)
+    }
+  }
+
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.pageSize)) : 1
 
   if (!authChecked) {
@@ -110,6 +135,15 @@ export default function AdminPage() {
               {data.total} usuario{data.total === 1 ? '' : 's'}
             </span>
           )}
+          <Button
+            variant="outline"
+            onClick={handleExport}
+            disabled={exporting || !data || data.total === 0}
+            className="gap-2 ml-auto h-11 bg-white"
+          >
+            {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            Descargar .txt
+          </Button>
         </div>
 
         {/* Tabla */}
